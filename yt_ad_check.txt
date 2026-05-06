@@ -1,0 +1,4 @@
+User is asking if Solution 1 (YouTube Player API) will have ads.
+Yes, YouTube iframe/player API *does* play ads if the video is monetized. This is a big downside for a seamless music player experience.
+If it plays an ad, the user hears the ad instead of the music, which ruins the Spotify-like experience.
+I need to be honest about this.

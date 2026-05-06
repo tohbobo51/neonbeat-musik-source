@@ -1,0 +1,7 @@
+User doesn't know how to set up n8n and RapidAPI.
+I need to offer an alternative or a simpler solution, or explain that we can build the UI first and they can figure out the n8n part later, OR we can use a simpler approach.
+Actually, if they just want YouTube links in the app, maybe the app doesn't *need* to download the MP3? 
+Wait, if they just play YouTube audio directly via an iframe or a YouTube audio player library, they wouldn't need to download it at all!
+Let's suggest two options:
+1. Provide a step-by-step guide for n8n.
+2. Alternative: Just embed YouTube videos as audio directly in the app (no downloading needed, saves Supabase storage space, 100% legal).

@@ -1,0 +1,5 @@
+I can't run the pre-compiled PAWN compiler here because it's a 32-bit binary and this container doesn't have 32-bit support (and I can't install it).
+I also can't compile the compiler from source because I can't install cmake/g++.
+But I can provide a Node.js based compiler if there is one, or an online API.
+Let's check if there's a node-pawn-compiler or something.
+Alternatively, I can tell the user the exact steps to compile it using GitHub Actions! That's a much better, automated solution for their repository.

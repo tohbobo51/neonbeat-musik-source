@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Music, Image, X, Check, Loader } from 'lucide-react';
+import { Upload, Music, Image, X, Check, Loader, Youtube, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ImageCropper from '../components/ImageCropper';
 import { useNavigate } from 'react-router-dom';
@@ -9,18 +9,29 @@ import supabase from '../lib/supabase';
 export default function UploadPage() {
   const { user, profile, isArtist } = useAuth();
   const navigate = useNavigate();
+  const [tab, setTab] = useState<'manual' | 'youtube'>('manual');
   const [title, setTitle] = useState('');
   const [authorName, setAuthorName] = useState(profile?.username || '');
   const [genreId, setGenreId] = useState('');
   const [genres, setGenres] = useState<any[]>([]);
+  
+  // Manual Upload State
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
+  
+  // YouTube State
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [youtubeAudioUrl, setYoutubeAudioUrl] = useState('');
+  const [youtubeCoverUrl, setYoutubeCoverUrl] = useState('');
+  const [fetchingYoutube, setFetchingYoutube] = useState(false);
+
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
+  
   const audioRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
 
@@ -71,9 +82,57 @@ export default function UploadPage() {
     return publicUrl;
   };
 
+  const handleFetchYoutube = async () => {
+    if (!youtubeUrl.trim()) return;
+    setFetchingYoutube(true);
+    setError('');
+    
+    try {
+      // Panggil API pihak ketiga
+      const res = await fetch(`https://api.naze.biz.id/download/youtube?url=${encodeURIComponent(youtubeUrl)}&format=mp3&apikey=nz-6d5d29dc61`);
+      const data = await res.json();
+      
+      if (data.success && data.result) {
+        // Ekstrak judul dan nama artis (jika formatnya "Artis - Judul")
+        const fullTitle = data.result.title || '';
+        let extractedArtist = authorName;
+        let extractedTitle = fullTitle;
+        
+        if (fullTitle.includes('-')) {
+          const parts = fullTitle.split('-');
+          extractedArtist = parts[0].trim();
+          extractedTitle = parts.slice(1).join('-').trim();
+        }
+        
+        setTitle(extractedTitle);
+        setAuthorName(extractedArtist);
+        setYoutubeAudioUrl(data.result.download);
+        setYoutubeCoverUrl(data.result.thumbnail);
+        setCoverPreview(data.result.thumbnail);
+      } else {
+        throw new Error('Video tidak ditemukan atau link tidak valid');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Gagal mengambil data dari YouTube');
+    } finally {
+      setFetchingYoutube(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!audioFile || !title.trim() || !user) return;
+    
+    if (tab === 'manual' && !audioFile) {
+      setError('Pilih file audio terlebih dahulu');
+      return;
+    }
+    
+    if (tab === 'youtube' && !youtubeAudioUrl) {
+      setError('Ambil data dari YouTube terlebih dahulu');
+      return;
+    }
+    
+    if (!title.trim() || !user) return;
     
     // Check if user has verified email
     if (!user.email_confirmed_at) {
@@ -85,22 +144,41 @@ export default function UploadPage() {
     setError('');
     try {
       setProgress(20);
-      let coverUrl = '';
-      if (coverBlob) {
-        coverUrl = await uploadFile(coverBlob, 'cover.jpg', 'covers', 'image/jpeg');
+      
+      // Handle Cover Art
+      let finalCoverUrl = '';
+      if (tab === 'manual' && coverBlob) {
+        finalCoverUrl = await uploadFile(coverBlob, 'cover.jpg', 'covers', 'image/jpeg');
+      } else if (tab === 'youtube') {
+        finalCoverUrl = youtubeCoverUrl;
       }
+      
       setProgress(60);
-      const audioUrl = await uploadFile(audioFile, audioFile.name, 'music', audioFile.type || 'audio/mpeg');
+      
+      // Handle Audio URL
+      let finalAudioUrl = '';
+      if (tab === 'manual' && audioFile) {
+        finalAudioUrl = await uploadFile(audioFile, audioFile.name, 'music', audioFile.type || 'audio/mpeg');
+      } else if (tab === 'youtube') {
+        finalAudioUrl = youtubeAudioUrl;
+      }
+      
       setProgress(90);
+      
+      // Save to database
       await fetch('/api/songs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title, artist_name: authorName || profile?.username,
-          audio_url: audioUrl, cover_url: coverUrl,
-          genre_id: genreId || null, artist_id: user.id,
+          title, 
+          artist_name: authorName || profile?.username,
+          audio_url: finalAudioUrl, 
+          cover_url: finalCoverUrl,
+          genre_id: genreId || null, 
+          artist_id: user.id,
         }),
       });
+      
       setProgress(100);
       setDone(true);
       setTimeout(() => navigate('/'), 2000);
@@ -146,35 +224,91 @@ export default function UploadPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Cover Art */}
-            <div className="bg-[#12001f]/80 border border-purple-500/20 rounded-2xl p-6">
-              <h2 className="text-white font-bold mb-4 flex items-center gap-2"><Image size={18} className="text-purple-400" /> Cover Art</h2>
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-purple-500/30 flex items-center justify-center cursor-pointer hover:border-purple-400 transition-colors bg-[#1a0030]"
-                  onClick={() => coverRef.current?.click()}>
-                  {coverPreview ? (
-                    <img src={coverPreview} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="text-center">
-                      <Image size={24} className="text-purple-400/50 mx-auto mb-1" />
-                      <p className="text-purple-300/40 text-xs">Pilih Gambar</p>
-                    </div>
-                  )}
+            
+            {/* Tabs Pilihan Upload */}
+            <div className="flex bg-[#12001f]/80 p-1 rounded-xl border border-purple-500/20">
+              <button
+                type="button"
+                onClick={() => setTab('manual')}
+                className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${tab === 'manual' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg' : 'text-purple-300/60 hover:text-white hover:bg-white/5'}`}
+              >
+                <Upload size={18} /> Upload Manual
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab('youtube')}
+                className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${tab === 'youtube' ? 'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg' : 'text-purple-300/60 hover:text-white hover:bg-white/5'}`}
+              >
+                <Youtube size={18} /> Import YouTube
+              </button>
+            </div>
+
+            {tab === 'youtube' && (
+              <div className="bg-[#12001f]/80 border border-purple-500/20 rounded-2xl p-6 space-y-4">
+                <h2 className="text-white font-bold flex items-center gap-2"><Youtube size={18} className="text-red-400" /> Link YouTube</h2>
+                <div className="flex gap-2">
+                  <input value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)}
+                    className="flex-1 bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-purple-300/40 focus:outline-none focus:border-purple-400 transition-all"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                  <button 
+                    type="button" 
+                    onClick={handleFetchYoutube}
+                    disabled={fetchingYoutube || !youtubeUrl}
+                    className="px-6 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {fetchingYoutube ? <Loader size={18} className="animate-spin" /> : <Search size={18} />}
+                    Cari
+                  </button>
                 </div>
-                <div className="flex-1">
-                  <p className="text-purple-300/70 text-sm mb-2">Klik untuk memilih gambar cover</p>
-                  <p className="text-purple-300/40 text-xs">Akan ada pilihan crop manual (persegi) atau auto-fit</p>
-                  {coverPreview && (
-                    <button type="button" onClick={() => { setCoverPreview(null); setCoverBlob(null); }}
-                      className="mt-2 text-red-400/70 text-xs hover:text-red-400 flex items-center gap-1">
-                      <X size={12} /> Hapus gambar
-                    </button>
-                  )}
+                {youtubeAudioUrl && (
+                  <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm flex items-center gap-2">
+                    <Check size={16} /> Data YouTube berhasil diambil! Silakan cek info di bawah.
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Cover Art */}
+            {tab === 'manual' && (
+              <div className="bg-[#12001f]/80 border border-purple-500/20 rounded-2xl p-6">
+                <h2 className="text-white font-bold mb-4 flex items-center gap-2"><Image size={18} className="text-purple-400" /> Cover Art</h2>
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-purple-500/30 flex items-center justify-center cursor-pointer hover:border-purple-400 transition-colors bg-[#1a0030]"
+                    onClick={() => coverRef.current?.click()}>
+                    {coverPreview ? (
+                      <img src={coverPreview} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-center">
+                        <Image size={24} className="text-purple-400/50 mx-auto mb-1" />
+                        <p className="text-purple-300/40 text-xs">Pilih Gambar</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-purple-300/70 text-sm mb-2">Klik untuk memilih gambar cover</p>
+                    <p className="text-purple-300/40 text-xs">Akan ada pilihan crop manual (persegi) atau auto-fit</p>
+                    {coverPreview && (
+                      <button type="button" onClick={() => { setCoverPreview(null); setCoverBlob(null); }}
+                        className="mt-2 text-red-400/70 text-xs hover:text-red-400 flex items-center gap-1">
+                        <X size={12} /> Hapus gambar
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <input ref={coverRef} type="file" accept="image/*" onChange={handleCoverSelect} className="hidden" />
+              </div>
+            )}
+            
+            {tab === 'youtube' && coverPreview && (
+              <div className="bg-[#12001f]/80 border border-purple-500/20 rounded-2xl p-6">
+                <h2 className="text-white font-bold mb-4 flex items-center gap-2"><Image size={18} className="text-purple-400" /> Cover Art (Dari YouTube)</h2>
+                <div className="w-32 h-32 rounded-xl overflow-hidden border-2 border-purple-500/30">
+                  <img src={coverPreview} alt="Cover" className="w-full h-full object-cover" />
                 </div>
               </div>
-              <input ref={coverRef} type="file" accept="image/*" onChange={handleCoverSelect} className="hidden" />
-            </div>
+            )}
 
             {/* Song Info */}
             <div className="bg-[#12001f]/80 border border-purple-500/20 rounded-2xl p-6 space-y-4">

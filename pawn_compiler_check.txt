@@ -1,0 +1,4 @@
+User is asking how to compile a SA-MP PAWN script (.pwn) to .amx.
+This requires the PAWN compiler (pawncc) which is a Windows executable (pawncc.exe) or a Linux binary.
+In this environment, we are running a Linux container. I can download the Linux version of the PAWN compiler (from a GitHub repo like Zeex/pawn or similar) and compile it via bash!
+Let me check if I can download and run the SA-MP pawn compiler here.
