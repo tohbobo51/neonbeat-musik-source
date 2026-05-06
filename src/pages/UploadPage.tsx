@@ -74,6 +74,13 @@ export default function UploadPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!audioFile || !title.trim() || !user) return;
+    
+    // Check if user has verified email
+    if (!user.email_confirmed_at) {
+      setError('Anda harus memverifikasi alamat email Anda sebelum dapat mengunggah lagu. Silakan periksa kotak masuk email Anda.');
+      return;
+    }
+    
     setUploading(true);
     setError('');
     try {
@@ -119,7 +126,26 @@ export default function UploadPage() {
             <p className="text-purple-300/60">Lagu kamu sudah tersedia di NeonBeat</p>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <>
+            {user && !user.email_confirmed_at && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6 flex items-start gap-3">
+                <div className="mt-0.5 text-red-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                </div>
+                <div>
+                  <h4 className="text-red-400 font-bold mb-1">Email Belum Diverifikasi</h4>
+                  <p className="text-red-300/80 text-sm">Anda harus memverifikasi alamat email Anda sebelum dapat mengunggah lagu. Silakan periksa kotak masuk email Anda.</p>
+                </div>
+              </div>
+            )}
+            
+            {progress > 0 && progress < 100 && (
+              <div className="w-full bg-[#12001f] rounded-full h-2 mb-6 overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
             {/* Cover Art */}
             <div className="bg-[#12001f]/80 border border-purple-500/20 rounded-2xl p-6">
               <h2 className="text-white font-bold mb-4 flex items-center gap-2"><Image size={18} className="text-purple-400" /> Cover Art</h2>
@@ -220,12 +246,19 @@ export default function UploadPage() {
               </div>
             )}
 
-            <motion.button type="submit" disabled={uploading || !audioFile || !title.trim()}
-              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-              className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-bold text-lg shadow-[0_0_20px_rgba(147,51,234,0.4)] disabled:opacity-50 flex items-center justify-center gap-2">
-              <Upload size={20} /> Upload Lagu
-            </motion.button>
+            <button
+              type="submit"
+              disabled={uploading || (!user?.email_confirmed_at)}
+              className="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:shadow-[0_0_30px_rgba(147,51,234,0.5)]"
+            >
+              {uploading ? (
+                <><Loader className="animate-spin" size={20} /> Mengunggah... {progress}%</>
+              ) : (
+                <><Upload size={20} /> Upload Lagu</>
+              )}
+            </button>
           </form>
+          </>
         )}
       </div>
       {cropSrc && <ImageCropper imageSrc={cropSrc} onCrop={handleCrop} onCancel={() => setCropSrc(null)} />}
