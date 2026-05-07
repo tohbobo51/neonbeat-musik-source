@@ -1,1 +1,55 @@
-{"data":"aW1wb3J0IHN1cGFiYXNlIGZyb20gJy4vX3N1cGFiYXNlLmpzJzsKCmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIGhhbmRsZXIocmVxLCByZXMpIHsKICByZXMuc2V0SGVhZGVyKCdBY2Nlc3MtQ29udHJvbC1BbGxvdy1PcmlnaW4nLCAnKicpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LU1ldGhvZHMnLCAnR0VULCBQT1NULCBQVVQsIERFTEVURSwgT1BUSU9OUycpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LUhlYWRlcnMnLCAnQ29udGVudC1UeXBlLCBBdXRob3JpemF0aW9uJyk7CiAgaWYgKHJlcS5tZXRob2QgPT09ICdPUFRJT05TJykgcmV0dXJuIHJlcy5zdGF0dXMoMjA0KS5lbmQoKTsKCiAgdHJ5IHsKICAgIGlmIChyZXEubWV0aG9kID09PSAnR0VUJykgewogICAgICAvLyBUaWRhayBwYWthaSBqb2luIOKAlCBhbWJpbCBnZW5yZXMgc2FqYSBsYWx1IGhpdHVuZyBzb25ncyB0ZXJwaXNhaAogICAgICBjb25zdCB7IGRhdGE6IGdlbnJlcywgZXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlCiAgICAgICAgLmZyb20oJ2dlbnJlcycpCiAgICAgICAgLnNlbGVjdCgnKicpCiAgICAgICAgLm9yZGVyKCduYW1lJywgeyBhc2NlbmRpbmc6IHRydWUgfSk7CiAgICAgIGlmIChlcnJvcikgdGhyb3cgZXJyb3I7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbihnZW5yZXMgfHwgW10pOwogICAgfQoKICAgIGlmIChyZXEubWV0aG9kID09PSAnUE9TVCcpIHsKICAgICAgY29uc3QgeyBuYW1lLCBjb2xvciwgZGVzY3JpcHRpb24gfSA9IHJlcS5ib2R5OwogICAgICBjb25zdCB7IGRhdGEsIGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZQogICAgICAgIC5mcm9tKCdnZW5yZXMnKQogICAgICAgIC5pbnNlcnQoeyBuYW1lLCBjb2xvcjogY29sb3IgfHwgJyM5MzMzZWEnLCBkZXNjcmlwdGlvbiB9KQogICAgICAgIC5zZWxlY3QoKQogICAgICAgIC5zaW5nbGUoKTsKICAgICAgaWYgKGVycm9yKSB0aHJvdyBlcnJvcjsKICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoMjAxKS5qc29uKGRhdGEpOwogICAgfQoKICAgIGlmIChyZXEubWV0aG9kID09PSAnUFVUJykgewogICAgICBjb25zdCB7IGlkLCBuYW1lLCBjb2xvciwgZGVzY3JpcHRpb24gfSA9IHJlcS5ib2R5OwogICAgICBjb25zdCB7IGRhdGEsIGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZQogICAgICAgIC5mcm9tKCdnZW5yZXMnKQogICAgICAgIC51cGRhdGUoeyBuYW1lLCBjb2xvciwgZGVzY3JpcHRpb24gfSkKICAgICAgICAuZXEoJ2lkJywgaWQpCiAgICAgICAgLnNlbGVjdCgpCiAgICAgICAgLnNpbmdsZSgpOwogICAgICBpZiAoZXJyb3IpIHRocm93IGVycm9yOwogICAgICByZXR1cm4gcmVzLnN0YXR1cygyMDApLmpzb24oZGF0YSk7CiAgICB9CgogICAgaWYgKHJlcS5tZXRob2QgPT09ICdERUxFVEUnKSB7CiAgICAgIGNvbnN0IHsgaWQgfSA9IHJlcS5ib2R5OwogICAgICBjb25zdCB7IGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCdnZW5yZXMnKS5kZWxldGUoKS5lcSgnaWQnLCBpZCk7CiAgICAgIGlmIChlcnJvcikgdGhyb3cgZXJyb3I7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IG9rOiB0cnVlIH0pOwogICAgfQoKICAgIHJlcy5zdGF0dXMoNDA1KS5qc29uKHsgZXJyb3I6ICdNZXRob2Qgbm90IGFsbG93ZWQnIH0pOwogIH0gY2F0Y2ggKGVycikgewogICAgY29uc29sZS5lcnJvcignR2VucmVzIEFQSSBlcnJvcjonLCBlcnIpOwogICAgcmVzLnN0YXR1cyg1MDApLmpzb24oeyBlcnJvcjogZXJyLm1lc3NhZ2UgfSk7CiAgfQp9Cg=="}
+import supabase from './_supabase.js';
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
+  try {
+    if (req.method === 'GET') {
+      // Tidak pakai join — ambil genres saja lalu hitung songs terpisah
+      const { data: genres, error } = await supabase
+        .from('genres')
+        .select('*')
+        .order('name', { ascending: true });
+      if (error) throw error;
+      return res.status(200).json(genres || []);
+    }
+
+    if (req.method === 'POST') {
+      const { name, color, description } = req.body;
+      const { data, error } = await supabase
+        .from('genres')
+        .insert({ name, color: color || '#9333ea', description })
+        .select()
+        .single();
+      if (error) throw error;
+      return res.status(201).json(data);
+    }
+
+    if (req.method === 'PUT') {
+      const { id, name, color, description } = req.body;
+      const { data, error } = await supabase
+        .from('genres')
+        .update({ name, color, description })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return res.status(200).json(data);
+    }
+
+    if (req.method === 'DELETE') {
+      const { id } = req.body;
+      const { error } = await supabase.from('genres').delete().eq('id', id);
+      if (error) throw error;
+      return res.status(200).json({ ok: true });
+    }
+
+    res.status(405).json({ error: 'Method not allowed' });
+  } catch (err) {
+    console.error('Genres API error:', err);
+    res.status(500).json({ error: err.message });
+  }
+}
