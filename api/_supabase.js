@@ -2,8 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { triggerRestore } from './_wake.js';
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_DB_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
   {
     global: {
       fetch: async (url, options) => {
@@ -16,3 +16,4 @@ const supabase = createClient(
 );
 
 export default supabase;
+
