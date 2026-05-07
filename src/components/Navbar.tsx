@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Music, Home, Search, Library, History, User, LogOut, Crown, Menu, X, Heart, ListMusic, Upload, Sparkles, BarChart3 } from 'lucide-react';
+import { Music, Home, Search, Library, History, User, LogOut, Crown, Menu, X, Heart, ListMusic, Upload, Sparkles, BarChart3, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 import QueuePanel from './QueuePanel';
@@ -9,7 +9,7 @@ import { usePlayer } from '../context/PlayerContext';
 import { ListMusic as QueueIcon } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, profile, isGuest, isAdmin, isArtist, signOut } = useAuth();
+  const { user, profile, isGuest, isAdmin, isArtist, signOut, displayName } = useAuth();
   const { currentSong } = usePlayer();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -75,6 +75,10 @@ export default function Navbar() {
               </Link>
             ) : user ? (
               <div className="flex items-center gap-1">
+                {/* Settings icon — desktop only */}
+                <Link to="/settings" className="p-2 text-purple-300/50 hover:text-purple-300 transition-colors hidden lg:flex">
+                  <Settings size={16} />
+                </Link>
                 <Link to="/profile" className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-purple-500/10 transition-all">
                   {profile?.avatar_url ? (
                     <img src={profile.avatar_url} alt="" className="w-7 h-7 rounded-full object-cover border border-purple-500/40" />
@@ -83,9 +87,9 @@ export default function Navbar() {
                       <User size={14} className="text-white" />
                     </div>
                   )}
-                  <span className="text-purple-300 text-sm hidden xl:block">{profile?.username || 'User'}</span>
+                  <span className="text-purple-300 text-sm hidden xl:block">{displayName}</span>
                 </Link>
-                <button onClick={signOut} className="p-2 text-purple-300/50 hover:text-purple-300 transition-colors">
+                <button onClick={signOut} className="p-2 text-purple-300/50 hover:text-purple-300 transition-colors hidden lg:flex">
                   <LogOut size={16} />
                 </button>
               </div>
@@ -102,6 +106,23 @@ export default function Navbar() {
         {mobileOpen && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
             className="fixed top-16 left-0 right-0 z-40 bg-[#0a0010]/95 backdrop-blur-xl border-b border-purple-500/20 p-4 max-h-[80vh] overflow-y-auto">
+
+            {/* Profile summary if logged in */}
+            {user && profile && (
+              <Link to="/profile" onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-purple-500/10 border border-purple-500/20 mb-3">
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-purple-500/30 flex-shrink-0">
+                  {profile.avatar_url
+                    ? <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                    : <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"><User size={16} className="text-white" /></div>}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-bold text-sm truncate">{displayName}</p>
+                  <p className="text-purple-300/50 text-xs">@{profile.username}</p>
+                </div>
+              </Link>
+            )}
+
             {navLinks.map(({ to, icon: Icon, label }) => (
               <Link key={to} to={to} onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 text-sm font-medium transition-all ${
@@ -110,6 +131,16 @@ export default function Navbar() {
                 <Icon size={18} />{label}
               </Link>
             ))}
+
+            {/* Settings link in mobile menu */}
+            {user && (
+              <Link to="/settings" onClick={() => setMobileOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 text-sm font-medium transition-all ${
+                  location.pathname === '/settings' ? 'bg-purple-500/20 text-purple-300' : 'text-purple-300/60'
+                }`}>
+                <Settings size={18} /> Pengaturan
+              </Link>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
