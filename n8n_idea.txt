@@ -1,4 +1,0 @@
-User is asking if they can use n8n with RapidAPI to download YouTube to MP3 and upload it.
-This is a great workaround for Vercel's timeout!
-We can create a webhook endpoint in n8n, and the React frontend calls that webhook.
-n8n does the heavy lifting (download via RapidAPI, convert, upload to Supabase), then n8n inserts the row into Supabase or returns the URL to the frontend.
