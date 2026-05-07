@@ -6,11 +6,13 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "https://hscwtfonjggdnnexztng.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_cxolPXgZlC7kFlyx_rWEow_Wz7_cemQ",
-    "SUPABASE_SERVICE_ROLE_KEY": "sb_secret_s1BLvwKHPuJ5an7uqvNFiQ_nVo1uRyW",
-    "VITE_SUPABASE_URL": "https://hscwtfonjggdnnexztng.supabase.co",
-    "VITE_SUPABASE_ANON_KEY": "sb_publishable_cxolPXgZlC7kFlyx_rWEow_Wz7_cemQ",
+    "SUPABASE_DB_URL": "https://yxykrlisotfwdgiulchs.supabase.co",
+    "SUPABASE_DB_SERVICE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4eWtybGlzb3Rmd2RnaXVsY2hzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Nzk5OTE0MCwiZXhwIjoyMDkzNTc1MTQwfQ.Fi74BaEBtxKR_jtEPDetx4J2MDDnQsgAedkcw2iekOA",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://yxykrlisotfwdgiulchs.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4eWtybGlzb3Rmd2RnaXVsY2hzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5OTkxNDAsImV4cCI6MjA5MzU3NTE0MH0.a7bq8aW11cJffeMShHfEhCTiGDZrUPbe9B4T4RdhVmM",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4eWtybGlzb3Rmd2RnaXVsY2hzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Nzk5OTE0MCwiZXhwIjoyMDkzNTc1MTQwfQ.Fi74BaEBtxKR_jtEPDetx4J2MDDnQsgAedkcw2iekOA",
+    "VITE_SUPABASE_URL": "https://yxykrlisotfwdgiulchs.supabase.co",
+    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4eWtybGlzb3Rmd2RnaXVsY2hzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5OTkxNDAsImV4cCI6MjA5MzU3NTE0MH0.a7bq8aW11cJffeMShHfEhCTiGDZrUPbe9B4T4RdhVmM",
     "VITE_GOOGLE_CLIENT_ID": "1065078894672-rmp5kp8vfjns5rn9kp5psfp16g691043.apps.googleusercontent.com",
     "VITE_GOOGLE_AUTH_PROXY": "https://designarena.ai/auth/google/callback"
   }
