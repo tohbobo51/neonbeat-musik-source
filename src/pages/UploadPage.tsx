@@ -367,9 +367,11 @@ export default function UploadPage() {
                 </div>
                 <div>
                   <label className="text-purple-300/70 text-sm mb-1 block">Nama Artis</label>
-                  <input value={authorName} onChange={e => setAuthorName(e.target.value)}
-                    className="w-full bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-purple-300/40 focus:outline-none focus:border-purple-400 transition-all"
-                    placeholder="Nama artis atau channel" />
+                  <div className="w-full bg-[#1a0030]/60 border border-purple-500/20 rounded-xl px-4 py-3 flex items-center gap-2 cursor-not-allowed">
+                    <span className="text-white/80 flex-1">{profile?.username}</span>
+                    <span className="text-xs text-purple-300/30 bg-purple-500/10 px-2 py-0.5 rounded-full flex-shrink-0">Username</span>
+                  </div>
+                  <p className="text-purple-300/30 text-xs mt-1">Nama artis = username akunmu (tidak bisa diubah).</p>
                 </div>
                 <div>
                   <label className="text-purple-300/70 text-sm mb-1 block">Genre</label>
