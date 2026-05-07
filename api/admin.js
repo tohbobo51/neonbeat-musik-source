@@ -18,7 +18,6 @@ export default async function handler(req, res) {
           supabase.from('listen_history').select('*', { count: 'exact', head: true }),
         ]);
 
-        // Play per hari 7 hari terakhir
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
         const { data: recentPlays } = await supabase
           .from('listen_history')
@@ -33,19 +32,17 @@ export default async function handler(req, res) {
           dayMap[key] = { date: key, label, plays: 0 };
         }
         (recentPlays || []).forEach(p => {
-          const key = p.played_at.split('T')[0];
+          const key = (p.played_at || '').split('T')[0];
           if (dayMap[key]) dayMap[key].plays++;
         });
         const playsByDay = Object.values(dayMap);
 
-        // Top songs
         const { data: topSongs } = await supabase
           .from('songs')
           .select('id, title, artist_name, play_count, cover_url')
           .order('play_count', { ascending: false })
           .limit(5);
 
-        // Registrasi per hari
         const { data: recentUsers } = await supabase
           .from('profiles')
           .select('created_at')
@@ -59,7 +56,7 @@ export default async function handler(req, res) {
           userDayMap[key] = { date: key, label, users: 0 };
         }
         (recentUsers || []).forEach(u => {
-          const key = u.created_at.split('T')[0];
+          const key = (u.created_at || '').split('T')[0];
           if (userDayMap[key]) userDayMap[key].users++;
         });
         const usersByDay = Object.values(userDayMap);
@@ -76,18 +73,38 @@ export default async function handler(req, res) {
       }
 
       if (action === 'users') {
-        const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .order('created_at', { ascending: false });
         if (error) throw error;
         return res.status(200).json(data || []);
       }
 
-      if (action === 'plays_chart') {\n        const sevenDaysAgo = new Date();\n        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);\n        const { data, error } = await supabase.from('listen_history').select('played_at').gte('played_at', sevenDaysAgo.toISOString());\n        if (error) throw error;\n        return res.status(200).json(data || []);\n      }\n\n      if (action === 'songs') {
-        const { data: songs, error } = await supabase.from('songs').select('*').order('created_at', { ascending: false });
+      if (action === 'plays_chart') {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+        const { data, error } = await supabase
+          .from('listen_history')
+          .select('played_at')
+          .gte('played_at', sevenDaysAgo.toISOString());
+        if (error) throw error;
+        return res.status(200).json(data || []);
+      }
+
+      if (action === 'songs') {
+        const { data: songs, error } = await supabase
+          .from('songs')
+          .select('*')
+          .order('created_at', { ascending: false });
         if (error) throw error;
         const genreIds = [...new Set((songs || []).map(s => s.genre_id).filter(Boolean))];
         let genreMap = {};
         if (genreIds.length > 0) {
-          const { data: genres } = await supabase.from('genres').select('id, name, color').in('id', genreIds);
+          const { data: genres } = await supabase
+            .from('genres')
+            .select('id, name, color')
+            .in('id', genreIds);
           if (genres) genres.forEach(g => { genreMap[g.id] = g; });
         }
         const enriched = (songs || []).map(s => ({ ...s, genres: genreMap[s.genre_id] || null }));
@@ -98,12 +115,22 @@ export default async function handler(req, res) {
     if (req.method === 'PUT') {
       const { action, id, ...updates } = req.body;
       if (action === 'toggle_song') {
-        const { data, error } = await supabase.from('songs').update({ is_active: updates.is_active }).eq('id', id).select().single();
+        const { data, error } = await supabase
+          .from('songs')
+          .update({ is_active: updates.is_active })
+          .eq('id', id)
+          .select()
+          .single();
         if (error) throw error;
         return res.status(200).json(data);
       }
       if (action === 'set_role') {
-        const { data, error } = await supabase.from('profiles').update({ role: updates.role, is_artist: updates.is_artist }).eq('user_id', id).select().single();
+        const { data, error } = await supabase
+          .from('profiles')
+          .update({ role: updates.role, is_artist: updates.is_artist })
+          .eq('user_id', id)
+          .select()
+          .single();
         if (error) throw error;
         return res.status(200).json(data);
       }

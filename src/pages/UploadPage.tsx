@@ -14,18 +14,15 @@ export default function UploadPage() {
   const [genreId, setGenreId] = useState('');
   const [genres, setGenres] = useState<any[]>([]);
 
-  // Manual Upload State
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [coverBlob, setCoverBlob] = useState<Blob | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
 
-  // YouTube State
   const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [youtubeAudioUrl, setYoutubeAudioUrl] = useState(''); // URL permanen Supabase
+  const [youtubeAudioUrl, setYoutubeAudioUrl] = useState('');
   const [youtubeCoverUrl, setYoutubeCoverUrl] = useState('');
   const [youtubeStep, setYoutubeStep] = useState<0 | 1 | 2 | 3 | 4>(0);
-  // 0=idle, 1=ambil info, 2=download MP3, 3=simpan ke Supabase, 4=selesai
 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -81,6 +78,20 @@ export default function UploadPage() {
     return downloadUrl;
   };
 
+  const extractChannelName = (result: any): string => {
+    return (
+      result.channel_name ||
+      result.channel ||
+      result.author ||
+      result.uploader ||
+      result.uploader_id ||
+      result.creator ||
+      result.artist ||
+      result.owner ||
+      ''
+    );
+  };
+
   const handleFetchYoutube = async () => {
     if (!youtubeUrl.trim()) return;
     setYoutubeStep(1);
@@ -91,7 +102,6 @@ export default function UploadPage() {
     setTitle('');
 
     try {
-      // Langkah 1: Ambil info video lewat /api/youtube (proxy server — tidak kena CORS)
       const res = await fetch(`/api/youtube?url=${encodeURIComponent(youtubeUrl)}`);
       const data = await res.json();
 
@@ -101,18 +111,19 @@ export default function UploadPage() {
 
       const result = data.result;
       setTitle(result.title || '');
-      setAuthorName(result.channel || result.author || result.uploader || authorName);
+
+      const channelName = extractChannelName(result);
+      setAuthorName(channelName || profile?.username || authorName);
+
       setYoutubeCoverUrl(result.thumbnail || '');
       setCoverPreview(result.thumbnail || null);
 
       const downloadUrl: string = result.download;
       if (!downloadUrl) throw new Error('URL download audio tidak ditemukan');
 
-      // Langkah 2: Download audio MP3
       setYoutubeStep(2);
-
-      // Langkah 3: Simpan ke Supabase storage lewat /api/youtube-save (server-side)
       setYoutubeStep(3);
+
       const saveRes = await fetch('/api/youtube-save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -169,7 +180,7 @@ export default function UploadPage() {
       if (tab === 'manual' && audioFile) {
         finalAudioUrl = await uploadFile(audioFile, audioFile.name, 'music', audioFile.type || 'audio/mpeg');
       } else if (tab === 'youtube') {
-        finalAudioUrl = youtubeAudioUrl; // sudah URL permanen Supabase
+        finalAudioUrl = youtubeAudioUrl;
       }
 
       setProgress(90);
@@ -273,11 +284,10 @@ export default function UploadPage() {
                     </button>
                   </div>
 
-                  {/* Step Progress */}
                   {youtubeStep > 0 && (
                     <div className="space-y-2 pt-1">
                       {([
-                        { step: 1, label: 'Mengambil info video (judul, artis, thumbnail)...' },
+                        { step: 1, label: 'Mengambil info video (judul, nama channel, thumbnail)...' },
                         { step: 2, label: 'Mendownload audio MP3 (10–30 detik)...' },
                         { step: 3, label: 'Menyimpan ke Supabase storage...' },
                       ] as const).map(({ step, label }) => {
@@ -351,10 +361,10 @@ export default function UploadPage() {
                     placeholder="Masukkan judul lagu" />
                 </div>
                 <div>
-                  <label className="text-purple-300/70 text-sm mb-1 block">Nama Artis/Pembuat</label>
+                  <label className="text-purple-300/70 text-sm mb-1 block">Nama Artis / Channel YouTube</label>
                   <input value={authorName} onChange={e => setAuthorName(e.target.value)}
                     className="w-full bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-purple-300/40 focus:outline-none focus:border-purple-400 transition-all"
-                    placeholder="Nama artis" />
+                    placeholder="Nama artis atau channel" />
                 </div>
                 <div>
                   <label className="text-purple-300/70 text-sm mb-1 block">Genre</label>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3 } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, X, Plus, Check } from 'lucide-react';
 import { usePlayer, AnimationStyle } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -54,15 +54,9 @@ function VinylAnimation({ coverUrl, isPlaying }: { coverUrl: string; isPlaying: 
             : 'conic-gradient(from 0deg, #1a0030, #9333ea, #1a0030, #c026d3, #1a0030)',
         }}
       >
-        {/* Vinyl grooves */}
         {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute inset-0 rounded-full border border-white/5"
-            style={{ margin: `${i * 8}px` }}
-          />
+          <div key={i} className="absolute inset-0 rounded-full border border-white/5" style={{ margin: `${i * 8}px` }} />
         ))}
-        {/* Center hole */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-5 h-5 rounded-full bg-[#0a0010] border-2 border-purple-500/50 shadow-[0_0_8px_rgba(147,51,234,0.8)]" />
         </div>
@@ -86,6 +80,17 @@ export default function MusicPlayer() {
   const [muted, setMuted] = useState(false);
   const [prevVol, setPrevVol] = useState(0.8);
 
+  const [liked, setLiked] = useState(false);
+  const [likeLoading, setLikeLoading] = useState(false);
+
+  const [showPlaylistPicker, setShowPlaylistPicker] = useState(false);
+  const [playlists, setPlaylists] = useState<any[]>([]);
+  const [playlistLoading, setPlaylistLoading] = useState(false);
+  const [addedPlaylistId, setAddedPlaylistId] = useState<string | null>(null);
+  const [newPlaylistName, setNewPlaylistName] = useState('');
+  const [creatingPlaylist, setCreatingPlaylist] = useState(false);
+  const [showNewPlaylist, setShowNewPlaylist] = useState(false);
+
   useEffect(() => {
     if (currentSong && user && !isGuest) {
       fetch('/api/history', {
@@ -93,20 +98,219 @@ export default function MusicPlayer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: user.id, song_id: currentSong.id }),
       }).catch(console.error);
+
+      checkLiked();
     }
   }, [currentSong?.id]);
+
+  const checkLiked = async () => {
+    if (!user || isGuest || !currentSong) return;
+    try {
+      const res = await fetch(`/api/likes?user_id=${user.id}`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setLiked(data.some((l: any) => l.song_id === currentSong.id));
+      }
+    } catch {}
+  };
+
+  const toggleLike = async () => {
+    if (!user || isGuest || !currentSong || likeLoading) return;
+    setLikeLoading(true);
+    try {
+      const res = await fetch('/api/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user.id, song_id: currentSong.id }),
+      });
+      const data = await res.json();
+      setLiked(data.liked);
+    } catch {}
+    setLikeLoading(false);
+  };
+
+  const openPlaylistPicker = async () => {
+    if (!user || isGuest || !currentSong) return;
+    setShowPlaylistPicker(true);
+    setAddedPlaylistId(null);
+    setShowNewPlaylist(false);
+    setNewPlaylistName('');
+    setPlaylistLoading(true);
+    try {
+      const res = await fetch(`/api/playlists?user_id=${user.id}`);
+      const data = await res.json();
+      setPlaylists(Array.isArray(data) ? data : []);
+    } catch {
+      setPlaylists([]);
+    }
+    setPlaylistLoading(false);
+  };
+
+  const addToPlaylist = async (playlistId: string) => {
+    if (!currentSong) return;
+    try {
+      await fetch('/api/playlists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'add_song', playlist_id: playlistId, song_id: currentSong.id }),
+      });
+      setAddedPlaylistId(playlistId);
+      setTimeout(() => setShowPlaylistPicker(false), 800);
+    } catch {}
+  };
+
+  const createAndAdd = async () => {
+    if (!newPlaylistName.trim() || !user || !currentSong) return;
+    setCreatingPlaylist(true);
+    try {
+      const res = await fetch('/api/playlists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user.id, name: newPlaylistName.trim() }),
+      });
+      const pl = await res.json();
+      if (pl?.id) {
+        await addToPlaylist(pl.id);
+      }
+    } catch {}
+    setCreatingPlaylist(false);
+  };
 
   if (!currentSong) return null;
 
   const progress = duration ? (currentTime / duration) * 100 : 0;
+  const canInteract = !!(user && !isGuest);
 
   const toggleMute = () => {
     if (muted) { setVolume(prevVol); setMuted(false); }
     else { setPrevVol(volume); setVolume(0); setMuted(true); }
   };
 
+  const LikeButton = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
+    <motion.button
+      whileHover={canInteract ? { scale: 1.15 } : {}}
+      whileTap={canInteract ? { scale: 0.85 } : {}}
+      onClick={toggleLike}
+      disabled={!canInteract || likeLoading}
+      className={`transition-all ${canInteract ? 'cursor-pointer' : 'cursor-default opacity-40'} ${className}`}
+      title={canInteract ? (liked ? 'Hapus dari Liked' : 'Tambah ke Liked') : 'Login untuk like'}
+    >
+      <Heart
+        size={size}
+        className={liked ? 'text-pink-500 fill-pink-500' : 'text-purple-300/60 hover:text-pink-400'}
+      />
+    </motion.button>
+  );
+
+  const PlaylistButton = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
+    <motion.button
+      whileHover={canInteract ? { scale: 1.15 } : {}}
+      whileTap={canInteract ? { scale: 0.85 } : {}}
+      onClick={openPlaylistPicker}
+      disabled={!canInteract}
+      className={`transition-all ${canInteract ? 'cursor-pointer' : 'cursor-default opacity-40'} ${className}`}
+      title={canInteract ? 'Tambah ke Playlist' : 'Login untuk menambah ke playlist'}
+    >
+      <ListPlus size={size} className="text-purple-300/60 hover:text-purple-300" />
+    </motion.button>
+  );
+
   return (
     <>
+      {/* Playlist Picker Modal */}
+      <AnimatePresence>
+        {showPlaylistPicker && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
+            onClick={() => setShowPlaylistPicker(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 60, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 60, scale: 0.95 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-sm bg-[#12001f] border border-purple-500/30 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(147,51,234,0.3)]"
+            >
+              <div className="flex items-center justify-between px-5 py-4 border-b border-purple-500/20">
+                <div>
+                  <p className="text-white font-bold">Tambah ke Playlist</p>
+                  <p className="text-purple-300/50 text-xs truncate max-w-[200px]">{currentSong.title}</p>
+                </div>
+                <button onClick={() => setShowPlaylistPicker(false)} className="text-purple-300/50 hover:text-purple-300 transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="p-4 space-y-2 max-h-64 overflow-y-auto">
+                {playlistLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : playlists.length === 0 && !showNewPlaylist ? (
+                  <p className="text-purple-300/40 text-sm text-center py-4">Belum ada playlist</p>
+                ) : (
+                  playlists.map(pl => (
+                    <button
+                      key={pl.id}
+                      onClick={() => addToPlaylist(pl.id)}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-[#1a0030] hover:bg-purple-500/10 border border-purple-500/10 hover:border-purple-500/30 transition-all text-left"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        {pl.cover_url
+                          ? <img src={pl.cover_url} alt="" className="w-full h-full object-cover" />
+                          : <ListPlus size={16} className="text-purple-400" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-semibold truncate">{pl.name}</p>
+                        <p className="text-purple-300/40 text-xs">{pl.song_count || 0} lagu</p>
+                      </div>
+                      {addedPlaylistId === pl.id && (
+                        <Check size={16} className="text-green-400 flex-shrink-0" />
+                      )}
+                    </button>
+                  ))
+                )}
+              </div>
+
+              <div className="px-4 pb-4">
+                {showNewPlaylist ? (
+                  <div className="flex gap-2">
+                    <input
+                      autoFocus
+                      value={newPlaylistName}
+                      onChange={e => setNewPlaylistName(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && createAndAdd()}
+                      placeholder="Nama playlist baru..."
+                      className="flex-1 bg-[#1a0030] border border-purple-500/30 rounded-xl px-3 py-2 text-white text-sm placeholder-purple-300/40 focus:outline-none focus:border-purple-400"
+                    />
+                    <button
+                      onClick={createAndAdd}
+                      disabled={creatingPlaylist || !newPlaylistName.trim()}
+                      className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white text-sm font-semibold disabled:opacity-50"
+                    >
+                      {creatingPlaylist ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Check size={16} />}
+                    </button>
+                    <button onClick={() => setShowNewPlaylist(false)} className="px-3 py-2 border border-purple-500/30 rounded-xl text-purple-300/60 hover:text-purple-300">
+                      <X size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowNewPlaylist(true)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-dashed border-purple-500/30 rounded-xl text-purple-300/60 hover:text-purple-300 hover:border-purple-400 transition-all text-sm"
+                  >
+                    <Plus size={16} /> Buat Playlist Baru
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Expanded Player */}
       <AnimatePresence>
         {expanded && (
@@ -181,8 +385,9 @@ export default function MusicPlayer() {
                 </div>
               </div>
 
-              {/* Controls */}
+              {/* Controls — Like | Prev | Play | Next | Playlist */}
               <div className="flex items-center justify-center gap-6 mb-6">
+                <LikeButton size={22} />
                 <button onClick={prevSong} className="text-purple-300/70 hover:text-purple-300 transition-colors">
                   <SkipBack size={24} />
                 </button>
@@ -196,6 +401,7 @@ export default function MusicPlayer() {
                 <button onClick={nextSong} className="text-purple-300/70 hover:text-purple-300 transition-colors">
                   <SkipForward size={24} />
                 </button>
+                <PlaylistButton size={22} />
               </div>
 
               {/* Volume */}
@@ -214,7 +420,7 @@ export default function MusicPlayer() {
         )}
       </AnimatePresence>
 
-      {/* Mini Player — sits above bottom nav on mobile (bottom-nav is h-14 = 56px) */}
+      {/* Mini Player */}
       <motion.div
         initial={{ y: 100 }} animate={{ y: 0 }}
         className="fixed left-0 right-0 z-40 bg-[#0d0018]/95 backdrop-blur-xl border-t border-purple-500/20 px-4 py-3 md:bottom-0 bottom-14"
@@ -247,7 +453,9 @@ export default function MusicPlayer() {
             <ChevronUp size={16} className="text-purple-300/60 flex-shrink-0" />
           </button>
 
-          <div className="flex items-center gap-3">
+          {/* Controls — Like | Prev | Play | Next | Playlist */}
+          <div className="flex items-center gap-2">
+            <LikeButton size={17} />
             <button onClick={prevSong} className="text-purple-300/60 hover:text-purple-300"><SkipBack size={18} /></button>
             <motion.button
               whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
@@ -257,6 +465,7 @@ export default function MusicPlayer() {
               {isPlaying ? <Pause size={16} className="text-white" /> : <Play size={16} className="text-white ml-0.5" />}
             </motion.button>
             <button onClick={nextSong} className="text-purple-300/60 hover:text-purple-300"><SkipForward size={18} /></button>
+            <PlaylistButton size={17} />
           </div>
         </div>
       </motion.div>
