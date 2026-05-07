@@ -1,1 +1,92 @@
-{"data":"aW1wb3J0IHN1cGFiYXNlIGZyb20gJy4vX3N1cGFiYXNlLmpzJzsKCmZ1bmN0aW9uIHNhbml0aXplVXNlcm5hbWUocmF3KSB7CiAgcmV0dXJuIChyYXcgfHwgJycpCiAgICAudG9Mb3dlckNhc2UoKQogICAgLnJlcGxhY2UoL1xzKy9nLCAnXycpCiAgICAucmVwbGFjZSgvW15hLXowLTlfXS9nLCAnJykKICAgIC5yZXBsYWNlKC9eXyt8XyskL2csICcnKQogICAgLnNsaWNlKDAsIDMwKTsKfQoKYXN5bmMgZnVuY3Rpb24gaXNVc2VybmFtZVRha2VuKHVzZXJuYW1lLCBleGNsdWRlVXNlcklkID0gbnVsbCkgewogIGxldCBxdWVyeSA9IHN1cGFiYXNlLmZyb20oJ3Byb2ZpbGVzJykuc2VsZWN0KCd1c2VyX2lkJykuZXEoJ3VzZXJuYW1lJywgdXNlcm5hbWUpOwogIGlmIChleGNsdWRlVXNlcklkKSBxdWVyeSA9IHF1ZXJ5Lm5lcSgndXNlcl9pZCcsIGV4Y2x1ZGVVc2VySWQpOwogIGNvbnN0IHsgZGF0YSB9ID0gYXdhaXQgcXVlcnkubGltaXQoMSk7CiAgcmV0dXJuIGRhdGEgJiYgZGF0YS5sZW5ndGggPiAwOwp9Cgphc3luYyBmdW5jdGlvbiBtYWtlVW5pcXVlVXNlcm5hbWUoYmFzZSwgZXhjbHVkZVVzZXJJZCA9IG51bGwpIHsKICBjb25zdCBjbGVhbiA9IHNhbml0aXplVXNlcm5hbWUoYmFzZSkgfHwgJ3VzZXInOwogIGlmICghKGF3YWl0IGlzVXNlcm5hbWVUYWtlbihjbGVhbiwgZXhjbHVkZVVzZXJJZCkpKSByZXR1cm4gY2xlYW47CiAgZm9yIChsZXQgaSA9IDI7IGkgPD0gOTk5OyBpKyspIHsKICAgIGNvbnN0IGNhbmRpZGF0ZSA9IGAke2NsZWFufSR7aX1gOwogICAgaWYgKCEoYXdhaXQgaXNVc2VybmFtZVRha2VuKGNhbmRpZGF0ZSwgZXhjbHVkZVVzZXJJZCkpKSByZXR1cm4gY2FuZGlkYXRlOwogIH0KICByZXR1cm4gYCR7Y2xlYW59XyR7TWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpICogOTAwMCArIDEwMDApfWA7Cn0KCmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIGhhbmRsZXIocmVxLCByZXMpIHsKICByZXMuc2V0SGVhZGVyKCdBY2Nlc3MtQ29udHJvbC1BbGxvdy1PcmlnaW4nLCAnKicpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LU1ldGhvZHMnLCAnR0VULCBQT1NULCBQVVQsIERFTEVURSwgT1BUSU9OUycpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LUhlYWRlcnMnLCAnQ29udGVudC1UeXBlLCBBdXRob3JpemF0aW9uJyk7CiAgaWYgKHJlcS5tZXRob2QgPT09ICdPUFRJT05TJykgcmV0dXJuIHJlcy5zdGF0dXMoMjA0KS5lbmQoKTsKCiAgdHJ5IHsKICAgIGlmIChyZXEubWV0aG9kID09PSAnR0VUJykgewogICAgICBjb25zdCB7IHVzZXJfaWQsIHVzZXJuYW1lLCBjaGVja191c2VybmFtZSB9ID0gcmVxLnF1ZXJ5OwoKICAgICAgaWYgKGNoZWNrX3VzZXJuYW1lKSB7CiAgICAgICAgY29uc3QgY2xlYW4gPSBzYW5pdGl6ZVVzZXJuYW1lKGNoZWNrX3VzZXJuYW1lKTsKICAgICAgICBjb25zdCB0YWtlbiA9IGF3YWl0IGlzVXNlcm5hbWVUYWtlbihjbGVhbiwgdXNlcl9pZCB8fCBudWxsKTsKICAgICAgICByZXR1cm4gcmVzLnN0YXR1cygyMDApLmpzb24oeyBhdmFpbGFibGU6ICF0YWtlbiwgc3VnZ2VzdGlvbjogY2xlYW4gfSk7CiAgICAgIH0KCiAgICAgIGxldCBxdWVyeSA9IHN1cGFiYXNlLmZyb20oJ3Byb2ZpbGVzJykuc2VsZWN0KCcqJyk7CiAgICAgIGlmICh1c2VyX2lkKSBxdWVyeSA9IHF1ZXJ5LmVxKCd1c2VyX2lkJywgdXNlcl9pZCk7CiAgICAgIGlmICh1c2VybmFtZSkgcXVlcnkgPSBxdWVyeS5lcSgndXNlcm5hbWUnLCB1c2VybmFtZSk7CiAgICAgIGNvbnN0IHsgZGF0YSwgZXJyb3IgfSA9IGF3YWl0IHF1ZXJ5LnNpbmdsZSgpOwogICAgICBpZiAoZXJyb3IgJiYgZXJyb3IuY29kZSAhPT0gJ1BHUlNUMTE2JykgdGhyb3cgZXJyb3I7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbihkYXRhIHx8IG51bGwpOwogICAgfQoKICAgIGlmIChyZXEubWV0aG9kID09PSAnUE9TVCcpIHsKICAgICAgY29uc3QgeyB1c2VyX2lkLCB1c2VybmFtZSwgYmlvLCBhdmF0YXJfdXJsLCBpc19hcnRpc3QsIHJvbGUgfSA9IHJlcS5ib2R5OwogICAgICBjb25zdCBjbGVhblVzZXJuYW1lID0gYXdhaXQgbWFrZVVuaXF1ZVVzZXJuYW1lKHVzZXJuYW1lIHx8ICd1c2VyJywgbnVsbCk7CiAgICAgIGNvbnN0IHsgZGF0YSwgZXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlCiAgICAgICAgLmZyb20oJ3Byb2ZpbGVzJykKICAgICAgICAudXBzZXJ0KHsgdXNlcl9pZCwgdXNlcm5hbWU6IGNsZWFuVXNlcm5hbWUsIGJpbzogYmlvIHx8ICcnLCBhdmF0YXJfdXJsOiBhdmF0YXJfdXJsIHx8ICcnLCBpc19hcnRpc3Q6IGlzX2FydGlzdCB8fCBmYWxzZSwgcm9sZTogcm9sZSB8fCAndXNlcicgfSkKICAgICAgICAuc2VsZWN0KCkuc2luZ2xlKCk7CiAgICAgIGlmIChlcnJvcikgdGhyb3cgZXJyb3I7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDIwMSkuanNvbihkYXRhKTsKICAgIH0KCiAgICBpZiAocmVxLm1ldGhvZCA9PT0gJ1BVVCcpIHsKICAgICAgY29uc3QgeyB1c2VyX2lkLCB1c2VybmFtZSwgLi4ucmVzdCB9ID0gcmVxLmJvZHk7CiAgICAgIGxldCB1cGRhdGVzID0geyAuLi5yZXN0IH07CiAgICAgIGlmICh1c2VybmFtZSAhPT0gdW5kZWZpbmVkKSB7CiAgICAgICAgY29uc3QgY2xlYW4gPSBzYW5pdGl6ZVVzZXJuYW1lKHVzZXJuYW1lKTsKICAgICAgICBpZiAoIWNsZWFuIHx8IGNsZWFuLmxlbmd0aCA8IDMpIHJldHVybiByZXMuc3RhdHVzKDQwMCkuanNvbih7IGVycm9yOiAnVXNlcm5hbWUgbWluaW1hbCAzIGthcmFrdGVyLCBoYW55YSBodXJ1ZiBrZWNpbCwgYW5na2EsIGRhbiB1bmRlcnNjb3JlJyB9KTsKICAgICAgICBjb25zdCB0YWtlbiA9IGF3YWl0IGlzVXNlcm5hbWVUYWtlbihjbGVhbiwgdXNlcl9pZCk7CiAgICAgICAgaWYgKHRha2VuKSByZXR1cm4gcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogJ1VzZXJuYW1lIHN1ZGFoIGRpcGFrYWkgb3JhbmcgbGFpbicgfSk7CiAgICAgICAgdXBkYXRlcy51c2VybmFtZSA9IGNsZWFuOwogICAgICB9CiAgICAgIGNvbnN0IHsgZGF0YSwgZXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlLmZyb20oJ3Byb2ZpbGVzJykudXBkYXRlKHVwZGF0ZXMpLmVxKCd1c2VyX2lkJywgdXNlcl9pZCkuc2VsZWN0KCkuc2luZ2xlKCk7CiAgICAgIGlmIChlcnJvcikgdGhyb3cgZXJyb3I7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbihkYXRhKTsKICAgIH0KCiAgICBpZiAocmVxLm1ldGhvZCA9PT0gJ0RFTEVURScpIHsKICAgICAgY29uc3QgeyB1c2VyX2lkIH0gPSByZXEuYm9keTsKICAgICAgYXdhaXQgc3VwYWJhc2UuZnJvbSgncHJvZmlsZXMnKS5kZWxldGUoKS5lcSgndXNlcl9pZCcsIHVzZXJfaWQpOwogICAgICBjb25zdCB7IGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZS5hdXRoLmFkbWluLmRlbGV0ZVVzZXIodXNlcl9pZCk7CiAgICAgIGlmIChlcnJvcikgdGhyb3cgZXJyb3I7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IG9rOiB0cnVlIH0pOwogICAgfQoKICAgIHJlcy5zdGF0dXMoNDA1KS5qc29uKHsgZXJyb3I6ICdNZXRob2Qgbm90IGFsbG93ZWQnIH0pOwogIH0gY2F0Y2ggKGVycikgewogICAgY29uc29sZS5lcnJvcignUHJvZmlsZXMgQVBJIGVycm9yOicsIGVycik7CiAgICByZXMuc3RhdHVzKDUwMCkuanNvbih7IGVycm9yOiBlcnIubWVzc2FnZSB9KTsKICB9Cn0K"}
+import supabase from './_supabase.js';
+
+function sanitizeUsername(raw) {
+  return (raw || '')
+    .toLowerCase()
+    .replace(/\s+/g, '_')
+    .replace(/[^a-z0-9_]/g, '')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 30);
+}
+
+async function isUsernameTaken(username, excludeUserId = null) {
+  let query = supabase.from('profiles').select('user_id').eq('username', username);
+  if (excludeUserId) query = query.neq('user_id', excludeUserId);
+  const { data } = await query.limit(1);
+  return data && data.length > 0;
+}
+
+async function makeUniqueUsername(base, excludeUserId = null) {
+  const clean = sanitizeUsername(base) || 'user';
+  if (!(await isUsernameTaken(clean, excludeUserId))) return clean;
+  for (let i = 2; i <= 999; i++) {
+    const candidate = `${clean}${i}`;
+    if (!(await isUsernameTaken(candidate, excludeUserId))) return candidate;
+  }
+  return `${clean}_${Math.floor(Math.random() * 9000 + 1000)}`;
+}
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
+  try {
+    if (req.method === 'GET') {
+      const { user_id, username, check_username } = req.query;
+
+      if (check_username) {
+        const clean = sanitizeUsername(check_username);
+        const taken = await isUsernameTaken(clean, user_id || null);
+        return res.status(200).json({ available: !taken, suggestion: clean });
+      }
+
+      let query = supabase.from('profiles').select('*');
+      if (user_id) query = query.eq('user_id', user_id);
+      if (username) query = query.eq('username', username);
+      const { data, error } = await query.single();
+      if (error && error.code !== 'PGRST116') throw error;
+      return res.status(200).json(data || null);
+    }
+
+    if (req.method === 'POST') {
+      const { user_id, username, bio, avatar_url, is_artist, role } = req.body;
+      const cleanUsername = await makeUniqueUsername(username || 'user', null);
+      const { data, error } = await supabase
+        .from('profiles')
+        .upsert({ user_id, username: cleanUsername, bio: bio || '', avatar_url: avatar_url || '', is_artist: is_artist || false, role: role || 'user' })
+        .select().single();
+      if (error) throw error;
+      return res.status(201).json(data);
+    }
+
+    if (req.method === 'PUT') {
+      const { user_id, username, ...rest } = req.body;
+      let updates = { ...rest };
+      if (username !== undefined) {
+        const clean = sanitizeUsername(username);
+        if (!clean || clean.length < 3) return res.status(400).json({ error: 'Username minimal 3 karakter, hanya huruf kecil, angka, dan underscore' });
+        const taken = await isUsernameTaken(clean, user_id);
+        if (taken) return res.status(400).json({ error: 'Username sudah dipakai orang lain' });
+        updates.username = clean;
+      }
+      const { data, error } = await supabase.from('profiles').update(updates).eq('user_id', user_id).select().single();
+      if (error) throw error;
+      return res.status(200).json(data);
+    }
+
+    if (req.method === 'DELETE') {
+      const { user_id } = req.body;
+      await supabase.from('profiles').delete().eq('user_id', user_id);
+      const { error } = await supabase.auth.admin.deleteUser(user_id);
+      if (error) throw error;
+      return res.status(200).json({ ok: true });
+    }
+
+    res.status(405).json({ error: 'Method not allowed' });
+  } catch (err) {
+    console.error('Profiles API error:', err);
+    res.status(500).json({ error: err.message });
+  }
+}
