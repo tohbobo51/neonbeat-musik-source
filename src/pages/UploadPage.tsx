@@ -79,17 +79,22 @@ export default function UploadPage() {
   };
 
   const extractChannelName = (result: any): string => {
-    return (
-      result.channel_name ||
-      result.channel ||
-      result.author ||
-      result.uploader ||
-      result.uploader_id ||
-      result.creator ||
-      result.artist ||
-      result.owner ||
-      ''
-    );
+    // First try the normalized field added by our API proxy
+    if (result._artist && typeof result._artist === 'string' && result._artist.trim()) {
+      return result._artist.trim();
+    }
+    const fields = [
+      'channel_name', 'channel', 'author', 'uploader', 'creator',
+      'artist', 'owner', 'artist_name', 'uploader_name', 'channelTitle',
+      'channel_title', 'publisher', 'performer', 'uploader_id',
+    ];
+    for (const f of fields) {
+      const val = result[f];
+      if (val && typeof val === 'string' && val.trim() && !val.startsWith('http')) {
+        return val.trim();
+      }
+    }
+    return '';
   };
 
   const handleFetchYoutube = async () => {
@@ -266,7 +271,7 @@ export default function UploadPage() {
                   <h2 className="text-white font-bold flex items-center gap-2">
                     <Youtube size={18} className="text-red-400" /> Link YouTube
                   </h2>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       value={youtubeUrl}
                       onChange={e => { setYoutubeUrl(e.target.value); if (ytReady || youtubeStep === 0) { setYoutubeStep(0); setYoutubeAudioUrl(''); } }}
@@ -277,7 +282,7 @@ export default function UploadPage() {
                       type="button"
                       onClick={handleFetchYoutube}
                       disabled={ytProcessing || !youtubeUrl.trim()}
-                      className="px-6 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold flex items-center gap-2 disabled:opacity-50 transition-all"
+                      className="w-full sm:w-auto px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50 transition-all"
                     >
                       {ytProcessing ? <Loader size={18} className="animate-spin" /> : <Search size={18} />}
                       Cari

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ListMusic, Plus, Trash2, Disc3, ChevronRight, Music } from 'lucide-react';
+import { ListMusic, Plus, Trash2, ChevronRight, Music } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -74,8 +74,8 @@ export default function PlaylistsPage() {
 
         <h1 className="text-3xl font-black text-white mb-6">Playlist Saya</h1>
 
-        {/* Create new playlist */}
-        <div className="flex gap-2 mb-8">
+        {/* Create new playlist — stacks vertically on mobile */}
+        <div className="flex flex-col sm:flex-row gap-2 mb-8">
           <input
             value={newName}
             onChange={e => setNewName(e.target.value)}
@@ -84,15 +84,15 @@ export default function PlaylistsPage() {
             className="flex-1 bg-[#12001f] border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-purple-300/40 focus:outline-none focus:border-purple-400 transition-all"
           />
           <motion.button
-            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
             onClick={createPlaylist}
             disabled={creating || !newName.trim()}
-            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold disabled:opacity-50 shadow-[0_0_15px_rgba(147,51,234,0.3)] transition-all"
+            className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold disabled:opacity-50 shadow-[0_0_15px_rgba(147,51,234,0.3)] transition-all sm:w-auto w-full"
           >
             {creating
               ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               : <Plus size={18} />}
-            Buat
+            Buat Playlist
           </motion.button>
         </div>
 
@@ -135,13 +135,14 @@ export default function PlaylistsPage() {
                     <p className="text-purple-300/50 text-sm mt-0.5">{pl.song_count || 0} lagu</p>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center gap-2">
+                  {/* Actions — delete always visible */}
+                  <div className="flex items-center gap-1">
                     <motion.button
                       whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                       onClick={e => deletePlaylist(e, pl.id)}
                       disabled={deletingId === pl.id}
-                      className="p-2 rounded-lg text-red-400/40 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-40"
+                      className="p-2 rounded-lg text-red-400/50 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40"
+                      title="Hapus playlist"
                     >
                       {deletingId === pl.id
                         ? <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
