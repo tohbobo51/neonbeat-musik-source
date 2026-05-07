@@ -14,6 +14,7 @@ import LibraryPage from './pages/LibraryPage';
 import HistoryPage from './pages/HistoryPage';
 import LikedPage from './pages/LikedPage';
 import PlaylistsPage from './pages/PlaylistsPage';
+import PlaylistDetailPage from './pages/PlaylistDetailPage';
 import ProfilePage from './pages/ProfilePage';
 import UploadPage from './pages/UploadPage';
 import AdminPage from './pages/AdminPage';
@@ -25,7 +26,7 @@ handleGoogleRedirect();
 
 function AnimatedRoutes() {
   const location = useLocation();
-  const { user, isGuest } = useAuth();
+  const { user } = useAuth();
 
   return (
     <AnimatePresence mode="wait">
@@ -37,6 +38,7 @@ function AnimatedRoutes() {
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/liked" element={<LikedPage />} />
         <Route path="/playlists" element={<PlaylistsPage />} />
+        <Route path="/playlists/:id" element={<PlaylistDetailPage />} />
         <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/auth" replace />} />
         <Route path="/upload" element={user ? <UploadPage /> : <Navigate to="/auth" replace />} />
         <Route path="/my-music" element={user ? <MyMusicPage /> : <Navigate to="/auth" replace />} />

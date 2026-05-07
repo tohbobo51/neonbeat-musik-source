@@ -361,7 +361,7 @@ export default function UploadPage() {
                     placeholder="Masukkan judul lagu" />
                 </div>
                 <div>
-                  <label className="text-purple-300/70 text-sm mb-1 block">Nama Artis / Channel YouTube</label>
+                  <label className="text-purple-300/70 text-sm mb-1 block">Nama Artis</label>
                   <input value={authorName} onChange={e => setAuthorName(e.target.value)}
                     className="w-full bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-purple-300/40 focus:outline-none focus:border-purple-400 transition-all"
                     placeholder="Nama artis atau channel" />

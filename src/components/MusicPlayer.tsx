@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, X, Plus, Check } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, X, Plus, Check, Timer } from 'lucide-react';
 import { usePlayer, AnimationStyle } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -8,6 +8,12 @@ function formatTime(s: number) {
   if (!s || isNaN(s)) return '0:00';
   const m = Math.floor(s / 60);
   const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, '0')}`;
+}
+
+function formatCountdown(s: number) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
   return `${m}:${sec.toString().padStart(2, '0')}`;
 }
 
@@ -73,6 +79,14 @@ function VinylAnimation({ coverUrl, isPlaying }: { coverUrl: string; isPlaying: 
   );
 }
 
+const TIMER_OPTIONS = [
+  { label: '5 menit', value: 5 * 60 },
+  { label: '10 menit', value: 10 * 60 },
+  { label: '15 menit', value: 15 * 60 },
+  { label: '30 menit', value: 30 * 60 },
+  { label: '60 menit', value: 60 * 60 },
+];
+
 export default function MusicPlayer() {
   const { currentSong, isPlaying, currentTime, duration, volume, animStyle, setAnimStyle, togglePlay, nextSong, prevSong, seek, setVolume } = usePlayer();
   const { user, isGuest } = useAuth();
@@ -80,9 +94,11 @@ export default function MusicPlayer() {
   const [muted, setMuted] = useState(false);
   const [prevVol, setPrevVol] = useState(0.8);
 
+  // Like
   const [liked, setLiked] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
 
+  // Playlist picker
   const [showPlaylistPicker, setShowPlaylistPicker] = useState(false);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [playlistLoading, setPlaylistLoading] = useState(false);
@@ -91,6 +107,11 @@ export default function MusicPlayer() {
   const [creatingPlaylist, setCreatingPlaylist] = useState(false);
   const [showNewPlaylist, setShowNewPlaylist] = useState(false);
 
+  // Sleep timer
+  const [showTimerMenu, setShowTimerMenu] = useState(false);
+  const [timerRemaining, setTimerRemaining] = useState<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
     if (currentSong && user && !isGuest) {
       fetch('/api/history', {
@@ -98,10 +119,40 @@ export default function MusicPlayer() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: user.id, song_id: currentSong.id }),
       }).catch(console.error);
-
       checkLiked();
     }
   }, [currentSong?.id]);
+
+  // Timer countdown
+  useEffect(() => {
+    if (timerRemaining === null) {
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
+    }
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTimerRemaining(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timerRef.current!);
+          if (isPlaying) togglePlay();
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [timerRemaining !== null]);
+
+  const startTimer = (seconds: number) => {
+    setTimerRemaining(seconds);
+    setShowTimerMenu(false);
+  };
+
+  const cancelTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimerRemaining(null);
+    setShowTimerMenu(false);
+  };
 
   const checkLiked = async () => {
     if (!user || isGuest || !currentSong) return;
@@ -169,9 +220,7 @@ export default function MusicPlayer() {
         body: JSON.stringify({ user_id: user.id, name: newPlaylistName.trim() }),
       });
       const pl = await res.json();
-      if (pl?.id) {
-        await addToPlaylist(pl.id);
-      }
+      if (pl?.id) await addToPlaylist(pl.id);
     } catch {}
     setCreatingPlaylist(false);
   };
@@ -195,10 +244,7 @@ export default function MusicPlayer() {
       className={`transition-all ${canInteract ? 'cursor-pointer' : 'cursor-default opacity-40'} ${className}`}
       title={canInteract ? (liked ? 'Hapus dari Liked' : 'Tambah ke Liked') : 'Login untuk like'}
     >
-      <Heart
-        size={size}
-        className={liked ? 'text-pink-500 fill-pink-500' : 'text-purple-300/60 hover:text-pink-400'}
-      />
+      <Heart size={size} className={liked ? 'text-pink-500 fill-pink-500' : 'text-purple-300/60 hover:text-pink-400'} />
     </motion.button>
   );
 
@@ -267,9 +313,7 @@ export default function MusicPlayer() {
                         <p className="text-white font-semibold truncate">{pl.name}</p>
                         <p className="text-purple-300/40 text-xs">{pl.song_count || 0} lagu</p>
                       </div>
-                      {addedPlaylistId === pl.id && (
-                        <Check size={16} className="text-green-400 flex-shrink-0" />
-                      )}
+                      {addedPlaylistId === pl.id && <Check size={16} className="text-green-400 flex-shrink-0" />}
                     </button>
                   ))
                 )}
@@ -286,11 +330,8 @@ export default function MusicPlayer() {
                       placeholder="Nama playlist baru..."
                       className="flex-1 bg-[#1a0030] border border-purple-500/30 rounded-xl px-3 py-2 text-white text-sm placeholder-purple-300/40 focus:outline-none focus:border-purple-400"
                     />
-                    <button
-                      onClick={createAndAdd}
-                      disabled={creatingPlaylist || !newPlaylistName.trim()}
-                      className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white text-sm font-semibold disabled:opacity-50"
-                    >
+                    <button onClick={createAndAdd} disabled={creatingPlaylist || !newPlaylistName.trim()}
+                      className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white text-sm font-semibold disabled:opacity-50">
                       {creatingPlaylist ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Check size={16} />}
                     </button>
                     <button onClick={() => setShowNewPlaylist(false)} className="px-3 py-2 border border-purple-500/30 rounded-xl text-purple-300/60 hover:text-purple-300">
@@ -298,10 +339,8 @@ export default function MusicPlayer() {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => setShowNewPlaylist(true)}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-dashed border-purple-500/30 rounded-xl text-purple-300/60 hover:text-purple-300 hover:border-purple-400 transition-all text-sm"
-                  >
+                  <button onClick={() => setShowNewPlaylist(true)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-dashed border-purple-500/30 rounded-xl text-purple-300/60 hover:text-purple-300 hover:border-purple-400 transition-all text-sm">
                     <Plus size={16} /> Buat Playlist Baru
                   </button>
                 )}
@@ -320,20 +359,68 @@ export default function MusicPlayer() {
             exit={{ opacity: 0, y: '100%' }}
             className="fixed inset-0 z-50 bg-[#0a0010]/95 backdrop-blur-2xl flex flex-col items-center justify-center p-8"
           >
-            <button onClick={() => setExpanded(false)} className="absolute top-6 right-6 text-purple-300/60 hover:text-purple-300">
-              <ChevronDown size={28} />
-            </button>
+            {/* Top bar */}
+            <div className="absolute top-6 left-6 right-6 flex items-center justify-between">
+              {/* Animation Selector */}
+              <div className="flex gap-2">
+                {([['static', Square], ['wave', Activity], ['vinyl', Disc3]] as [AnimationStyle, any][]).map(([style, Icon]) => (
+                  <button key={style} onClick={() => setAnimStyle(style)}
+                    className={`p-2 rounded-lg transition-all ${
+                      animStyle === style ? 'bg-purple-500/30 text-purple-300 shadow-[0_0_10px_rgba(147,51,234,0.4)]' : 'text-purple-300/40 hover:text-purple-300'
+                    }`}>
+                    <Icon size={18} />
+                  </button>
+                ))}
+              </div>
 
-            {/* Animation Selector */}
-            <div className="absolute top-6 left-6 flex gap-2">
-              {([['static', Square], ['wave', Activity], ['vinyl', Disc3]] as [AnimationStyle, any][]).map(([style, Icon]) => (
-                <button key={style} onClick={() => setAnimStyle(style)}
-                  className={`p-2 rounded-lg transition-all ${
-                    animStyle === style ? 'bg-purple-500/30 text-purple-300 shadow-[0_0_10px_rgba(147,51,234,0.4)]' : 'text-purple-300/40 hover:text-purple-300'
-                  }`}>
-                  <Icon size={18} />
+              {/* Right: Timer + Close */}
+              <div className="flex items-center gap-2">
+                {/* Sleep Timer */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowTimerMenu(v => !v)}
+                    className={`p-2 rounded-lg transition-all flex items-center gap-1.5 ${
+                      timerRemaining !== null
+                        ? 'bg-purple-500/30 text-purple-300 shadow-[0_0_10px_rgba(147,51,234,0.4)]'
+                        : 'text-purple-300/40 hover:text-purple-300'
+                    }`}
+                    title="Timer tidur"
+                  >
+                    <Timer size={18} />
+                    {timerRemaining !== null && (
+                      <span className="text-xs font-bold tabular-nums">{formatCountdown(timerRemaining)}</span>
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {showTimerMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: -8 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: -8 }}
+                        className="absolute top-full right-0 mt-2 w-40 bg-[#12001f] border border-purple-500/30 rounded-xl shadow-[0_0_30px_rgba(147,51,234,0.3)] overflow-hidden z-10"
+                      >
+                        {timerRemaining !== null && (
+                          <button onClick={cancelTimer}
+                            className="w-full px-4 py-2.5 text-left text-sm text-red-400 hover:bg-red-500/10 transition-colors border-b border-purple-500/20">
+                            Batalkan Timer
+                          </button>
+                        )}
+                        {TIMER_OPTIONS.map(opt => (
+                          <button key={opt.value} onClick={() => startTimer(opt.value)}
+                            className="w-full px-4 py-2.5 text-left text-sm text-purple-300 hover:bg-purple-500/10 transition-colors">
+                            {opt.label}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                <button onClick={() => setExpanded(false)} className="text-purple-300/60 hover:text-purple-300 p-2">
+                  <ChevronDown size={24} />
                 </button>
-              ))}
+              </div>
             </div>
 
             <div className="w-full max-w-sm text-center">
@@ -365,17 +452,13 @@ export default function MusicPlayer() {
 
               {/* Progress */}
               <div className="mb-4">
-                <div
-                  className="w-full h-2 bg-purple-900/50 rounded-full cursor-pointer group relative"
+                <div className="w-full h-2 bg-purple-900/50 rounded-full cursor-pointer group relative"
                   onClick={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     seek(((e.clientX - rect.left) / rect.width) * duration);
                   }}
                 >
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full relative"
-                    style={{ width: `${progress}%` }}
-                  >
+                  <motion.div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full relative" style={{ width: `${progress}%` }}>
                     <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white shadow-[0_0_8px_rgba(147,51,234,0.8)] opacity-0 group-hover:opacity-100 transition-opacity" />
                   </motion.div>
                 </div>
@@ -391,11 +474,8 @@ export default function MusicPlayer() {
                 <button onClick={prevSong} className="text-purple-300/70 hover:text-purple-300 transition-colors">
                   <SkipBack size={24} />
                 </button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                  onClick={togglePlay}
-                  className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-[0_0_25px_rgba(147,51,234,0.6)]"
-                >
+                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={togglePlay}
+                  className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-[0_0_25px_rgba(147,51,234,0.6)]">
                   {isPlaying ? <Pause size={24} className="text-white" /> : <Play size={24} className="text-white ml-1" />}
                 </motion.button>
                 <button onClick={nextSong} className="text-purple-300/70 hover:text-purple-300 transition-colors">
@@ -409,11 +489,9 @@ export default function MusicPlayer() {
                 <button onClick={toggleMute} className="text-purple-300/60 hover:text-purple-300">
                   {muted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
                 </button>
-                <input
-                  type="range" min={0} max={1} step={0.01} value={volume}
+                <input type="range" min={0} max={1} step={0.01} value={volume}
                   onChange={e => setVolume(Number(e.target.value))}
-                  className="flex-1 accent-purple-500 cursor-pointer"
-                />
+                  className="flex-1 accent-purple-500 cursor-pointer" />
               </div>
             </div>
           </motion.div>
@@ -425,8 +503,7 @@ export default function MusicPlayer() {
         initial={{ y: 100 }} animate={{ y: 0 }}
         className="fixed left-0 right-0 z-40 bg-[#0d0018]/95 backdrop-blur-xl border-t border-purple-500/20 px-4 py-3 md:bottom-0 bottom-14"
       >
-        <div
-          className="w-full h-1 bg-purple-900/40 rounded-full mb-3 cursor-pointer"
+        <div className="w-full h-1 bg-purple-900/40 rounded-full mb-3 cursor-pointer"
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             seek(((e.clientX - rect.left) / rect.width) * duration);
@@ -457,11 +534,8 @@ export default function MusicPlayer() {
           <div className="flex items-center gap-2">
             <LikeButton size={17} />
             <button onClick={prevSong} className="text-purple-300/60 hover:text-purple-300"><SkipBack size={18} /></button>
-            <motion.button
-              whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-              onClick={togglePlay}
-              className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-[0_0_15px_rgba(147,51,234,0.5)]"
-            >
+            <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={togglePlay}
+              className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-[0_0_15px_rgba(147,51,234,0.5)]">
               {isPlaying ? <Pause size={16} className="text-white" /> : <Play size={16} className="text-white ml-0.5" />}
             </motion.button>
             <button onClick={nextSong} className="text-purple-300/60 hover:text-purple-300"><SkipForward size={18} /></button>
