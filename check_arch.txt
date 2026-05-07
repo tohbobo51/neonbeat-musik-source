@@ -1,5 +1,0 @@
-The pawncc binary is likely a 32-bit executable.
-This environment is likely a 64-bit container without 32-bit libraries (like libc6:i386), which is why it says "not found" when trying to run it.
-Let me try to download a 64-bit version or compile it from source.
-Wait, Zeex's compiler provides linux binaries, but they might be 32-bit.
-Let me check the release page for a 64-bit version or try to compile from source.
