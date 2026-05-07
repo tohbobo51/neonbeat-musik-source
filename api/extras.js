@@ -1,1 +1,195 @@
-{"data":"LyoqCiAqIEFQSSBnYWJ1bmdhbiB1bnR1azogYXJ0aXN0LXN0YXRzLCBmb2xsb3dzLCBub3RpZmljYXRpb25zLCBzZXR0aW5ncywgcXVldWUsIHJlY29tbWVuZGF0aW9ucwogKiBSb3V0ZSBiZXJkYXNhcmthbiBxdWVyeSBwYXJhbSA/cm91dGU9eHh4CiAqLwppbXBvcnQgc3VwYWJhc2UgZnJvbSAnLi9fc3VwYWJhc2UuanMnOwoKLy8g4pSA4pSAIEFydGlzdCBTdGF0cyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAKYXN5bmMgZnVuY3Rpb24gaGFuZGxlQXJ0aXN0U3RhdHMocmVxLCByZXMpIHsKICBjb25zdCB7IGFydGlzdF9pZCB9ID0gcmVxLnF1ZXJ5OwogIGlmICghYXJ0aXN0X2lkKSByZXR1cm4gcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogJ2FydGlzdF9pZCB3YWppYicgfSk7CiAgY29uc3QgeyBkYXRhOiBzb25ncyB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgnc29uZ3MnKS5zZWxlY3QoJ2lkLHRpdGxlLHBsYXlfY291bnQsY292ZXJfdXJsJykuZXEoJ2FydGlzdF9pZCcsIGFydGlzdF9pZCk7CiAgY29uc3Qgc29uZ0lkcyA9IChzb25ncyB8fCBbXSkubWFwKHMgPT4gcy5pZCk7CiAgY29uc3QgdG90YWxQbGF5cyA9IChzb25ncyB8fCBbXSkucmVkdWNlKChzdW0sIHMpID0+IHN1bSArIChzLnBsYXlfY291bnQgfHwgMCksIDApOwogIGxldCB0b3RhbExpa2VzID0gMDsKICBpZiAoc29uZ0lkcy5sZW5ndGggPiAwKSB7IGNvbnN0IHsgY291bnQgfSA9IGF3YWl0IHN1cGFiYXNlLmZyb20oJ2xpa2VzJykuc2VsZWN0KCcqJywgeyBjb3VudDogJ2V4YWN0JywgaGVhZDogdHJ1ZSB9KS5pbignc29uZ19pZCcsIHNvbmdJZHMpOyB0b3RhbExpa2VzID0gY291bnQgfHwgMDsgfQogIGNvbnN0IHsgZGF0YTogcHJvZmlsZSB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgncHJvZmlsZXMnKS5zZWxlY3QoJ2ZvbGxvd2VyX2NvdW50LGZvbGxvd2luZ19jb3VudCx1c2VybmFtZSxhdmF0YXJfdXJsJykuZXEoJ3VzZXJfaWQnLCBhcnRpc3RfaWQpLnNpbmdsZSgpOwogIGNvbnN0IHBsYXlzUGVyRGF5ID0gW107CiAgaWYgKHNvbmdJZHMubGVuZ3RoID4gMCkgewogICAgY29uc3Qgc2V2ZW5EYXlzQWdvID0gbmV3IERhdGUoKTsgc2V2ZW5EYXlzQWdvLnNldERhdGUoc2V2ZW5EYXlzQWdvLmdldERhdGUoKSAtIDcpOwogICAgY29uc3QgeyBkYXRhOiBoaXN0b3J5IH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCdsaXN0ZW5faGlzdG9yeScpLnNlbGVjdCgncGxheWVkX2F0JykuaW4oJ3NvbmdfaWQnLCBzb25nSWRzKS5ndGUoJ3BsYXllZF9hdCcsIHNldmVuRGF5c0Fnby50b0lTT1N0cmluZygpKTsKICAgIGNvbnN0IGRheU1hcCA9IHt9OwogICAgZm9yIChsZXQgaSA9IDY7IGkgPj0gMDsgaS0tKSB7IGNvbnN0IGQgPSBuZXcgRGF0ZSgpOyBkLnNldERhdGUoZC5nZXREYXRlKCkgLSBpKTsgZGF5TWFwW2QudG9JU09TdHJpbmcoKS5zbGljZSgwLCAxMCldID0gMDsgfQogICAgKGhpc3RvcnkgfHwgW10pLmZvckVhY2goaCA9PiB7IGNvbnN0IGsgPSBoLnBsYXllZF9hdC5zbGljZSgwLCAxMCk7IGlmIChkYXlNYXBba10gIT09IHVuZGVmaW5lZCkgZGF5TWFwW2tdKys7IH0pOwogICAgT2JqZWN0LmVudHJpZXMoZGF5TWFwKS5mb3JFYWNoKChbZGF0ZSwgcGxheXNdKSA9PiBwbGF5c1BlckRheS5wdXNoKHsgZGF0ZSwgcGxheXMgfSkpOwogIH0gZWxzZSB7CiAgICBmb3IgKGxldCBpID0gNjsgaSA+PSAwOyBpLS0pIHsgY29uc3QgZCA9IG5ldyBEYXRlKCk7IGQuc2V0RGF0ZShkLmdldERhdGUoKSAtIGkpOyBwbGF5c1BlckRheS5wdXNoKHsgZGF0ZTogZC50b0lTT1N0cmluZygpLnNsaWNlKDAsIDEwKSwgcGxheXM6IDAgfSk7IH0KICB9CiAgY29uc3QgdG9wU29uZ3MgPSBbLi4uKHNvbmdzIHx8IFtdKV0uc29ydCgoYSwgYikgPT4gKGIucGxheV9jb3VudCB8fCAwKSAtIChhLnBsYXlfY291bnQgfHwgMCkpLnNsaWNlKDAsIDUpOwogIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IHRvdGFsUGxheXMsIHRvdGFsTGlrZXMsIHRvdGFsU29uZ3M6IChzb25ncyB8fCBbXSkubGVuZ3RoLCBmb2xsb3dlckNvdW50OiBwcm9maWxlPy5mb2xsb3dlcl9jb3VudCB8fCAwLCBmb2xsb3dpbmdDb3VudDogcHJvZmlsZT8uZm9sbG93aW5nX2NvdW50IHx8IDAsIHBsYXlzUGVyRGF5LCB0b3BTb25ncywgcHJvZmlsZSB9KTsKfQoKLy8g4pSA4pSAIEZvbGxvd3Mg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmFzeW5jIGZ1bmN0aW9uIGhhbmRsZUZvbGxvd3MocmVxLCByZXMpIHsKICBpZiAocmVxLm1ldGhvZCA9PT0gJ0dFVCcpIHsKICAgIGNvbnN0IHsgZm9sbG93ZXJfaWQsIGFydGlzdF9pZCwgdHlwZSB9ID0gcmVxLnF1ZXJ5OwogICAgaWYgKHR5cGUgPT09ICdmb2xsb3dlcnMnKSB7CiAgICAgIGNvbnN0IHsgZGF0YSB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgnZm9sbG93cycpLnNlbGVjdCgnZm9sbG93ZXJfaWQnKS5lcSgnYXJ0aXN0X2lkJywgYXJ0aXN0X2lkKTsKICAgICAgY29uc3QgaWRzID0gKGRhdGEgfHwgW10pLm1hcChmID0+IGYuZm9sbG93ZXJfaWQpOwogICAgICBsZXQgcHJvZmlsZXMgPSBbXTsKICAgICAgaWYgKGlkcy5sZW5ndGggPiAwKSB7IGNvbnN0IHsgZGF0YTogcCB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgncHJvZmlsZXMnKS5zZWxlY3QoJ3VzZXJfaWQsdXNlcm5hbWUsYXZhdGFyX3VybCcpLmluKCd1c2VyX2lkJywgaWRzKTsgcHJvZmlsZXMgPSBwIHx8IFtdOyB9CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IGNvdW50OiBpZHMubGVuZ3RoLCBwcm9maWxlcyB9KTsKICAgIH0KICAgIGlmIChmb2xsb3dlcl9pZCAmJiBhcnRpc3RfaWQpIHsKICAgICAgY29uc3QgeyBkYXRhIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCdmb2xsb3dzJykuc2VsZWN0KCdpZCcpLmVxKCdmb2xsb3dlcl9pZCcsIGZvbGxvd2VyX2lkKS5lcSgnYXJ0aXN0X2lkJywgYXJ0aXN0X2lkKS5zaW5nbGUoKTsKICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoMjAwKS5qc29uKHsgZm9sbG93aW5nOiAhIWRhdGEgfSk7CiAgICB9CiAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogJ1BhcmFtZXRlciB0aWRhayBsZW5na2FwJyB9KTsKICB9CiAgaWYgKHJlcS5tZXRob2QgPT09ICdQT1NUJykgewogICAgY29uc3QgeyBmb2xsb3dlcl9pZCwgYXJ0aXN0X2lkIH0gPSByZXEuYm9keTsKICAgIGNvbnN0IHsgZGF0YTogZXhpc3RpbmcgfSA9IGF3YWl0IHN1cGFiYXNlLmZyb20oJ2ZvbGxvd3MnKS5zZWxlY3QoJ2lkJykuZXEoJ2ZvbGxvd2VyX2lkJywgZm9sbG93ZXJfaWQpLmVxKCdhcnRpc3RfaWQnLCBhcnRpc3RfaWQpLnNpbmdsZSgpOwogICAgaWYgKGV4aXN0aW5nKSB7CiAgICAgIGF3YWl0IHN1cGFiYXNlLmZyb20oJ2ZvbGxvd3MnKS5kZWxldGUoKS5lcSgnZm9sbG93ZXJfaWQnLCBmb2xsb3dlcl9pZCkuZXEoJ2FydGlzdF9pZCcsIGFydGlzdF9pZCk7CiAgICAgIGNvbnN0IHsgZGF0YTogcCB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgncHJvZmlsZXMnKS5zZWxlY3QoJ2ZvbGxvd2VyX2NvdW50JykuZXEoJ3VzZXJfaWQnLCBhcnRpc3RfaWQpLnNpbmdsZSgpOwogICAgICBpZiAocCkgYXdhaXQgc3VwYWJhc2UuZnJvbSgncHJvZmlsZXMnKS51cGRhdGUoeyBmb2xsb3dlcl9jb3VudDogTWF0aC5tYXgoMCwgKHAuZm9sbG93ZXJfY291bnQgfHwgMSkgLSAxKSB9KS5lcSgndXNlcl9pZCcsIGFydGlzdF9pZCk7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IGZvbGxvd2luZzogZmFsc2UgfSk7CiAgICB9CiAgICBhd2FpdCBzdXBhYmFzZS5mcm9tKCdmb2xsb3dzJykuaW5zZXJ0KHsgZm9sbG93ZXJfaWQsIGFydGlzdF9pZCB9KTsKICAgIGNvbnN0IHsgZGF0YTogcCB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgncHJvZmlsZXMnKS5zZWxlY3QoJ2ZvbGxvd2VyX2NvdW50JykuZXEoJ3VzZXJfaWQnLCBhcnRpc3RfaWQpLnNpbmdsZSgpOwogICAgaWYgKHApIGF3YWl0IHN1cGFiYXNlLmZyb20oJ3Byb2ZpbGVzJykudXBkYXRlKHsgZm9sbG93ZXJfY291bnQ6IChwLmZvbGxvd2VyX2NvdW50IHx8IDApICsgMSB9KS5lcSgndXNlcl9pZCcsIGFydGlzdF9pZCk7CiAgICBjb25zdCB7IGRhdGE6IGZwIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCdwcm9maWxlcycpLnNlbGVjdCgndXNlcm5hbWUnKS5lcSgndXNlcl9pZCcsIGZvbGxvd2VyX2lkKS5zaW5nbGUoKTsKICAgIHRyeSB7IGF3YWl0IHN1cGFiYXNlLmZyb20oJ25vdGlmaWNhdGlvbnMnKS5pbnNlcnQoeyB1c2VyX2lkOiBhcnRpc3RfaWQsIHR5cGU6ICdmb2xsb3cnLCB0aXRsZTogJ1Blbmdpa3V0IEJhcnUnLCBtZXNzYWdlOiBgJHtmcD8udXNlcm5hbWUgfHwgJ1Nlc2VvcmFuZyd9IG11bGFpIG1lbmdpa3V0aSBrYW11IWAsIGlzX3JlYWQ6IGZhbHNlIH0pOyB9IGNhdGNoKGUpIHt9CiAgICByZXR1cm4gcmVzLnN0YXR1cygyMDEpLmpzb24oeyBmb2xsb3dpbmc6IHRydWUgfSk7CiAgfQogIHJldHVybiByZXMuc3RhdHVzKDQwNSkuanNvbih7IGVycm9yOiAnTWV0aG9kIG5vdCBhbGxvd2VkJyB9KTsKfQoKLy8g4pSA4pSAIE5vdGlmaWNhdGlvbnMg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmFzeW5jIGZ1bmN0aW9uIGhhbmRsZU5vdGlmaWNhdGlvbnMocmVxLCByZXMpIHsKICBpZiAocmVxLm1ldGhvZCA9PT0gJ0dFVCcpIHsKICAgIGNvbnN0IHsgdXNlcl9pZCB9ID0gcmVxLnF1ZXJ5OwogICAgY29uc3QgeyBkYXRhLCBlcnJvciB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgnbm90aWZpY2F0aW9ucycpLnNlbGVjdCgnKicpLmVxKCd1c2VyX2lkJywgdXNlcl9pZCkub3JkZXIoJ2NyZWF0ZWRfYXQnLCB7IGFzY2VuZGluZzogZmFsc2UgfSkubGltaXQoMzApOwogICAgaWYgKGVycm9yKSByZXR1cm4gcmVzLnN0YXR1cygyMDApLmpzb24oeyBub3RpZmljYXRpb25zOiBbXSwgdW5yZWFkOiAwIH0pOwogICAgY29uc3QgdW5yZWFkID0gKGRhdGEgfHwgW10pLmZpbHRlcihuID0+ICFuLmlzX3JlYWQpLmxlbmd0aDsKICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IG5vdGlmaWNhdGlvbnM6IGRhdGEgfHwgW10sIHVucmVhZCB9KTsKICB9CiAgaWYgKHJlcS5tZXRob2QgPT09ICdQVVQnKSB7CiAgICBjb25zdCB7IHVzZXJfaWQsIGlkIH0gPSByZXEuYm9keTsKICAgIGlmIChpZCkgYXdhaXQgc3VwYWJhc2UuZnJvbSgnbm90aWZpY2F0aW9ucycpLnVwZGF0ZSh7IGlzX3JlYWQ6IHRydWUgfSkuZXEoJ2lkJywgaWQpOwogICAgZWxzZSBhd2FpdCBzdXBhYmFzZS5mcm9tKCdub3RpZmljYXRpb25zJykudXBkYXRlKHsgaXNfcmVhZDogdHJ1ZSB9KS5lcSgndXNlcl9pZCcsIHVzZXJfaWQpOwogICAgcmV0dXJuIHJlcy5zdGF0dXMoMjAwKS5qc29uKHsgb2s6IHRydWUgfSk7CiAgfQogIGlmIChyZXEubWV0aG9kID09PSAnREVMRVRFJykgewogICAgY29uc3QgeyB1c2VyX2lkIH0gPSByZXEuYm9keTsKICAgIGF3YWl0IHN1cGFiYXNlLmZyb20oJ25vdGlmaWNhdGlvbnMnKS5kZWxldGUoKS5lcSgndXNlcl9pZCcsIHVzZXJfaWQpOwogICAgcmV0dXJuIHJlcy5zdGF0dXMoMjAwKS5qc29uKHsgb2s6IHRydWUgfSk7CiAgfQogIHJldHVybiByZXMuc3RhdHVzKDQwNSkuanNvbih7IGVycm9yOiAnTWV0aG9kIG5vdCBhbGxvd2VkJyB9KTsKfQoKLy8g4pSA4pSAIFNldHRpbmdzIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgAphc3luYyBmdW5jdGlvbiBoYW5kbGVTZXR0aW5ncyhyZXEsIHJlcykgewogIGlmIChyZXEubWV0aG9kID09PSAnR0VUJykgewogICAgY29uc3QgeyB1c2VyX2lkIH0gPSByZXEucXVlcnk7CiAgICBjb25zdCB7IGRhdGEsIGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCd1c2VyX3NldHRpbmdzJykuc2VsZWN0KCcqJykuZXEoJ3VzZXJfaWQnLCB1c2VyX2lkKS5zaW5nbGUoKTsKICAgIGlmIChlcnJvcikgcmV0dXJuIHJlcy5zdGF0dXMoMjAwKS5qc29uKHsgdXNlcl9pZCwgdGhlbWU6ICdkYXJrJyB9KTsKICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbihkYXRhIHx8IHsgdXNlcl9pZCwgdGhlbWU6ICdkYXJrJyB9KTsKICB9CiAgaWYgKHJlcS5tZXRob2QgPT09ICdQT1NUJykgewogICAgY29uc3QgeyB1c2VyX2lkLCB0aGVtZSB9ID0gcmVxLmJvZHk7CiAgICBjb25zdCB7IGRhdGEsIGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCd1c2VyX3NldHRpbmdzJykudXBzZXJ0KHsgdXNlcl9pZCwgdGhlbWUsIHVwZGF0ZWRfYXQ6IG5ldyBEYXRlKCkudG9JU09TdHJpbmcoKSB9KS5zZWxlY3QoKS5zaW5nbGUoKTsKICAgIGlmIChlcnJvcikgcmV0dXJuIHJlcy5zdGF0dXMoMjAwKS5qc29uKHsgdXNlcl9pZCwgdGhlbWUgfSk7CiAgICByZXR1cm4gcmVzLnN0YXR1cygyMDApLmpzb24oZGF0YSk7CiAgfQogIHJldHVybiByZXMuc3RhdHVzKDQwNSkuanNvbih7IGVycm9yOiAnTWV0aG9kIG5vdCBhbGxvd2VkJyB9KTsKfQoKLy8g4pSA4pSAIFF1ZXVlIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgAphc3luYyBmdW5jdGlvbiBoYW5kbGVRdWV1ZShyZXEsIHJlcykgewogIGlmIChyZXEubWV0aG9kID09PSAnR0VUJykgewogICAgY29uc3QgeyB1c2VyX2lkIH0gPSByZXEucXVlcnk7CiAgICBjb25zdCB7IGRhdGEsIGVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCdxdWV1ZV9zb25ncycpLnNlbGVjdCgnKicpLmVxKCd1c2VyX2lkJywgdXNlcl9pZCkub3JkZXIoJ3Bvc2l0aW9uJyk7CiAgICBpZiAoZXJyb3IpIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbihbXSk7CiAgICBjb25zdCBzb25nSWRzID0gKGRhdGEgfHwgW10pLm1hcChxID0+IHEuc29uZ19pZCk7CiAgICBpZiAoc29uZ0lkcy5sZW5ndGggPT09IDApIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbihbXSk7CiAgICBjb25zdCB7IGRhdGE6IHNvbmdzIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCdzb25ncycpLnNlbGVjdCgnKicpLmluKCdpZCcsIHNvbmdJZHMpOwogICAgY29uc3QgZ2VucmVJZHMgPSBbLi4ubmV3IFNldCgoc29uZ3MgfHwgW10pLm1hcChzID0+IHMuZ2VucmVfaWQpLmZpbHRlcihCb29sZWFuKSldOwogICAgbGV0IGdlbnJlTWFwID0ge307CiAgICBpZiAoZ2VucmVJZHMubGVuZ3RoID4gMCkgeyBjb25zdCB7IGRhdGE6IGdlbnJlcyB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgnZ2VucmVzJykuc2VsZWN0KCdpZCxuYW1lLGNvbG9yJykuaW4oJ2lkJywgZ2VucmVJZHMpOyBpZiAoZ2VucmVzKSBnZW5yZXMuZm9yRWFjaChnID0+IHsgZ2VucmVNYXBbZy5pZF0gPSBnOyB9KTsgfQogICAgY29uc3Qgc29uZ01hcCA9IHt9OwogICAgKHNvbmdzIHx8IFtdKS5mb3JFYWNoKHMgPT4geyBzb25nTWFwW3MuaWRdID0geyAuLi5zLCBnZW5yZXM6IGdlbnJlTWFwW3MuZ2VucmVfaWRdIHx8IG51bGwgfTsgfSk7CiAgICByZXR1cm4gcmVzLnN0YXR1cygyMDApLmpzb24oKGRhdGEgfHwgW10pLm1hcChxID0+ICh7IC4uLnEsIHNvbmc6IHNvbmdNYXBbcS5zb25nX2lkXSB8fCBudWxsIH0pKS5maWx0ZXIocSA9PiBxLnNvbmcpKTsKICB9CiAgaWYgKHJlcS5tZXRob2QgPT09ICdQT1NUJykgewogICAgY29uc3QgeyB1c2VyX2lkLCBzb25nX2lkLCBhY3Rpb24gfSA9IHJlcS5ib2R5OwogICAgaWYgKGFjdGlvbiA9PT0gJ2NsZWFyJykgeyBhd2FpdCBzdXBhYmFzZS5mcm9tKCdxdWV1ZV9zb25ncycpLmRlbGV0ZSgpLmVxKCd1c2VyX2lkJywgdXNlcl9pZCk7IHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IG9rOiB0cnVlIH0pOyB9CiAgICBjb25zdCB7IGRhdGE6IG1heFBvcyB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgncXVldWVfc29uZ3MnKS5zZWxlY3QoJ3Bvc2l0aW9uJykuZXEoJ3VzZXJfaWQnLCB1c2VyX2lkKS5vcmRlcigncG9zaXRpb24nLCB7IGFzY2VuZGluZzogZmFsc2UgfSkubGltaXQoMSkuc2luZ2xlKCk7CiAgICBjb25zdCBwb3NpdGlvbiA9IChtYXhQb3M/LnBvc2l0aW9uIHx8IDApICsgMTsKICAgIGNvbnN0IHsgZGF0YSwgZXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlLmZyb20oJ3F1ZXVlX3NvbmdzJykuaW5zZXJ0KHsgdXNlcl9pZCwgc29uZ19pZCwgcG9zaXRpb24gfSkuc2VsZWN0KCkuc2luZ2xlKCk7CiAgICBpZiAoZXJyb3IpIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IG9rOiB0cnVlLCBub3RlOiAncXVldWUgbm90IHJlYWR5JyB9KTsKICAgIHJldHVybiByZXMuc3RhdHVzKDIwMSkuanNvbihkYXRhKTsKICB9CiAgaWYgKHJlcS5tZXRob2QgPT09ICdERUxFVEUnKSB7CiAgICBjb25zdCB7IGlkLCB1c2VyX2lkIH0gPSByZXEuYm9keTsKICAgIGlmIChpZCkgYXdhaXQgc3VwYWJhc2UuZnJvbSgncXVldWVfc29uZ3MnKS5kZWxldGUoKS5lcSgnaWQnLCBpZCk7CiAgICBlbHNlIGF3YWl0IHN1cGFiYXNlLmZyb20oJ3F1ZXVlX3NvbmdzJykuZGVsZXRlKCkuZXEoJ3VzZXJfaWQnLCB1c2VyX2lkKTsKICAgIHJldHVybiByZXMuc3RhdHVzKDIwMCkuanNvbih7IG9rOiB0cnVlIH0pOwogIH0KICByZXR1cm4gcmVzLnN0YXR1cyg0MDUpLmpzb24oeyBlcnJvcjogJ01ldGhvZCBub3QgYWxsb3dlZCcgfSk7Cn0KCi8vIOKUgOKUgCBSZWNvbW1lbmRhdGlvbnMg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmFzeW5jIGZ1bmN0aW9uIGhhbmRsZVJlY29tbWVuZGF0aW9ucyhyZXEsIHJlcykgewogIGNvbnN0IHsgdXNlcl9pZCwgbGltaXQgPSAxMCB9ID0gcmVxLnF1ZXJ5OwogIGxldCByZWNvbW1lbmRlZFNvbmdzID0gW107CiAgaWYgKHVzZXJfaWQpIHsKICAgIGNvbnN0IHsgZGF0YTogaGlzdG9yeSB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgnbGlzdGVuX2hpc3RvcnknKS5zZWxlY3QoJ3NvbmdfaWQnKS5lcSgndXNlcl9pZCcsIHVzZXJfaWQpLm9yZGVyKCdwbGF5ZWRfYXQnLCB7IGFzY2VuZGluZzogZmFsc2UgfSkubGltaXQoNTApOwogICAgaWYgKGhpc3RvcnkgJiYgaGlzdG9yeS5sZW5ndGggPiAwKSB7CiAgICAgIGNvbnN0IHNvbmdJZHMgPSBoaXN0b3J5Lm1hcChoID0+IGguc29uZ19pZCk7CiAgICAgIGNvbnN0IHsgZGF0YTogbGlzdGVuZWRTb25ncyB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgnc29uZ3MnKS5zZWxlY3QoJ2dlbnJlX2lkJykuaW4oJ2lkJywgc29uZ0lkcyk7CiAgICAgIGNvbnN0IGdlbnJlQ291bnQgPSB7fTsKICAgICAgKGxpc3RlbmVkU29uZ3MgfHwgW10pLmZvckVhY2gocyA9PiB7IGlmIChzLmdlbnJlX2lkKSBnZW5yZUNvdW50W3MuZ2VucmVfaWRdID0gKGdlbnJlQ291bnRbcy5nZW5yZV9pZF0gfHwgMCkgKyAxOyB9KTsKICAgICAgY29uc3QgdG9wR2VucmVzID0gT2JqZWN0LmVudHJpZXMoZ2VucmVDb3VudCkuc29ydCgoYSwgYikgPT4gYlsxXSAtIGFbMV0pLnNsaWNlKDAsIDMpLm1hcCgoW2lkXSkgPT4gaWQpOwogICAgICBpZiAodG9wR2VucmVzLmxlbmd0aCA+IDApIHsKICAgICAgICBsZXQgcSA9IHN1cGFiYXNlLmZyb20oJ3NvbmdzJykuc2VsZWN0KCcqJykuaW4oJ2dlbnJlX2lkJywgdG9wR2VucmVzKS5lcSgnaXNfYWN0aXZlJywgdHJ1ZSkub3JkZXIoJ3BsYXlfY291bnQnLCB7IGFzY2VuZGluZzogZmFsc2UgfSkubGltaXQoTnVtYmVyKGxpbWl0KSk7CiAgICAgICAgaWYgKHNvbmdJZHMubGVuZ3RoID4gMCkgcSA9IHEubm90KCdpZCcsICdpbicsIGAoJHtzb25nSWRzLnNsaWNlKDAsIDUwKS5qb2luKCcsJyl9KWApOwogICAgICAgIGNvbnN0IHsgZGF0YTogc29uZ3MgfSA9IGF3YWl0IHE7CiAgICAgICAgcmVjb21tZW5kZWRTb25ncyA9IHNvbmdzIHx8IFtdOwogICAgICB9CiAgICB9CiAgfQogIGlmIChyZWNvbW1lbmRlZFNvbmdzLmxlbmd0aCA8IE51bWJlcihsaW1pdCkpIHsKICAgIGNvbnN0IGV4aXN0aW5nSWRzID0gcmVjb21tZW5kZWRTb25ncy5tYXAocyA9PiBzLmlkKTsKICAgIGxldCBxID0gc3VwYWJhc2UuZnJvbSgnc29uZ3MnKS5zZWxlY3QoJyonKS5lcSgnaXNfYWN0aXZlJywgdHJ1ZSkub3JkZXIoJ3BsYXlfY291bnQnLCB7IGFzY2VuZGluZzogZmFsc2UgfSkubGltaXQoTnVtYmVyKGxpbWl0KSk7CiAgICBpZiAoZXhpc3RpbmdJZHMubGVuZ3RoID4gMCkgcSA9IHEubm90KCdpZCcsICdpbicsIGAoJHtleGlzdGluZ0lkcy5qb2luKCcsJyl9KWApOwogICAgY29uc3QgeyBkYXRhOiBwb3B1bGFyIH0gPSBhd2FpdCBxOwogICAgcmVjb21tZW5kZWRTb25ncyA9IFsuLi5yZWNvbW1lbmRlZFNvbmdzLCAuLi4ocG9wdWxhciB8fCBbXSldLnNsaWNlKDAsIE51bWJlcihsaW1pdCkpOwogIH0KICBjb25zdCBnZW5yZUlkcyA9IFsuLi5uZXcgU2V0KHJlY29tbWVuZGVkU29uZ3MubWFwKHMgPT4gcy5nZW5yZV9pZCkuZmlsdGVyKEJvb2xlYW4pKV07CiAgbGV0IGdlbnJlTWFwID0ge307CiAgaWYgKGdlbnJlSWRzLmxlbmd0aCA+IDApIHsgY29uc3QgeyBkYXRhOiBnZW5yZXMgfSA9IGF3YWl0IHN1cGFiYXNlLmZyb20oJ2dlbnJlcycpLnNlbGVjdCgnaWQsbmFtZSxjb2xvcicpLmluKCdpZCcsIGdlbnJlSWRzKTsgaWYgKGdlbnJlcykgZ2VucmVzLmZvckVhY2goZyA9PiB7IGdlbnJlTWFwW2cuaWRdID0gZzsgfSk7IH0KICByZXR1cm4gcmVzLnN0YXR1cygyMDApLmpzb24ocmVjb21tZW5kZWRTb25ncy5tYXAocyA9PiAoeyAuLi5zLCBnZW5yZXM6IHMuZ2VucmVfaWQgPyBnZW5yZU1hcFtzLmdlbnJlX2lkXSB8fCBudWxsIDogbnVsbCB9KSkpOwp9CgovLyDilIDilIAgTWFpbiBSb3V0ZXIg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIGhhbmRsZXIocmVxLCByZXMpIHsKICByZXMuc2V0SGVhZGVyKCdBY2Nlc3MtQ29udHJvbC1BbGxvdy1PcmlnaW4nLCAnKicpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LU1ldGhvZHMnLCAnR0VULCBQT1NULCBQVVQsIERFTEVURSwgT1BUSU9OUycpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LUhlYWRlcnMnLCAnQ29udGVudC1UeXBlLCBBdXRob3JpemF0aW9uJyk7CiAgaWYgKHJlcS5tZXRob2QgPT09ICdPUFRJT05TJykgcmV0dXJuIHJlcy5zdGF0dXMoMjA0KS5lbmQoKTsKCiAgY29uc3Qgcm91dGUgPSByZXEucXVlcnkucm91dGU7CiAgdHJ5IHsKICAgIGlmIChyb3V0ZSA9PT0gJ2FydGlzdC1zdGF0cycpIHJldHVybiBhd2FpdCBoYW5kbGVBcnRpc3RTdGF0cyhyZXEsIHJlcyk7CiAgICBpZiAocm91dGUgPT09ICdmb2xsb3dzJykgcmV0dXJuIGF3YWl0IGhhbmRsZUZvbGxvd3MocmVxLCByZXMpOwogICAgaWYgKHJvdXRlID09PSAnbm90aWZpY2F0aW9ucycpIHJldHVybiBhd2FpdCBoYW5kbGVOb3RpZmljYXRpb25zKHJlcSwgcmVzKTsKICAgIGlmIChyb3V0ZSA9PT0gJ3NldHRpbmdzJykgcmV0dXJuIGF3YWl0IGhhbmRsZVNldHRpbmdzKHJlcSwgcmVzKTsKICAgIGlmIChyb3V0ZSA9PT0gJ3F1ZXVlJykgcmV0dXJuIGF3YWl0IGhhbmRsZVF1ZXVlKHJlcSwgcmVzKTsKICAgIGlmIChyb3V0ZSA9PT0gJ3JlY29tbWVuZGF0aW9ucycpIHJldHVybiBhd2FpdCBoYW5kbGVSZWNvbW1lbmRhdGlvbnMocmVxLCByZXMpOwogICAgcmV0dXJuIHJlcy5zdGF0dXMoNDAwKS5qc29uKHsgZXJyb3I6ICdyb3V0ZSB0aWRhayBkaWtlbmFsaScgfSk7CiAgfSBjYXRjaCAoZXJyKSB7CiAgICBjb25zb2xlLmVycm9yKCdFeHRyYXMgQVBJIGVycm9yOicsIGVycik7CiAgICByZXMuc3RhdHVzKDUwMCkuanNvbih7IGVycm9yOiBlcnIubWVzc2FnZSB9KTsKICB9Cn0K"}
+/**
+ * API gabungan untuk: artist-stats, follows, notifications, settings, queue, recommendations
+ * Route berdasarkan query param ?route=xxx
+ */
+import supabase from './_supabase.js';
+
+// ── Artist Stats ──────────────────────────────────────────
+async function handleArtistStats(req, res) {
+  const { artist_id } = req.query;
+  if (!artist_id) return res.status(400).json({ error: 'artist_id wajib' });
+  const { data: songs } = await supabase.from('songs').select('id,title,play_count,cover_url').eq('artist_id', artist_id);
+  const songIds = (songs || []).map(s => s.id);
+  const totalPlays = (songs || []).reduce((sum, s) => sum + (s.play_count || 0), 0);
+  let totalLikes = 0;
+  if (songIds.length > 0) { const { count } = await supabase.from('likes').select('*', { count: 'exact', head: true }).in('song_id', songIds); totalLikes = count || 0; }
+  const { data: profile } = await supabase.from('profiles').select('follower_count,following_count,username,avatar_url').eq('user_id', artist_id).single();
+  const playsPerDay = [];
+  if (songIds.length > 0) {
+    const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const { data: history } = await supabase.from('listen_history').select('played_at').in('song_id', songIds).gte('played_at', sevenDaysAgo.toISOString());
+    const dayMap = {};
+    for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); dayMap[d.toISOString().slice(0, 10)] = 0; }
+    (history || []).forEach(h => { const k = h.played_at.slice(0, 10); if (dayMap[k] !== undefined) dayMap[k]++; });
+    Object.entries(dayMap).forEach(([date, plays]) => playsPerDay.push({ date, plays }));
+  } else {
+    for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); playsPerDay.push({ date: d.toISOString().slice(0, 10), plays: 0 }); }
+  }
+  const topSongs = [...(songs || [])].sort((a, b) => (b.play_count || 0) - (a.play_count || 0)).slice(0, 5);
+  return res.status(200).json({ totalPlays, totalLikes, totalSongs: (songs || []).length, followerCount: profile?.follower_count || 0, followingCount: profile?.following_count || 0, playsPerDay, topSongs, profile });
+}
+
+// ── Follows ────────────────────────────────────────────────
+async function handleFollows(req, res) {
+  if (req.method === 'GET') {
+    const { follower_id, artist_id, type } = req.query;
+    if (type === 'followers') {
+      const { data } = await supabase.from('follows').select('follower_id').eq('artist_id', artist_id);
+      const ids = (data || []).map(f => f.follower_id);
+      let profiles = [];
+      if (ids.length > 0) { const { data: p } = await supabase.from('profiles').select('user_id,username,avatar_url').in('user_id', ids); profiles = p || []; }
+      return res.status(200).json({ count: ids.length, profiles });
+    }
+    if (follower_id && artist_id) {
+      const { data } = await supabase.from('follows').select('id').eq('follower_id', follower_id).eq('artist_id', artist_id).single();
+      return res.status(200).json({ following: !!data });
+    }
+    return res.status(400).json({ error: 'Parameter tidak lengkap' });
+  }
+  if (req.method === 'POST') {
+    const { follower_id, artist_id } = req.body;
+    const { data: existing } = await supabase.from('follows').select('id').eq('follower_id', follower_id).eq('artist_id', artist_id).single();
+    if (existing) {
+      await supabase.from('follows').delete().eq('follower_id', follower_id).eq('artist_id', artist_id);
+      const { data: p } = await supabase.from('profiles').select('follower_count').eq('user_id', artist_id).single();
+      if (p) await supabase.from('profiles').update({ follower_count: Math.max(0, (p.follower_count || 1) - 1) }).eq('user_id', artist_id);
+      return res.status(200).json({ following: false });
+    }
+    await supabase.from('follows').insert({ follower_id, artist_id });
+    const { data: p } = await supabase.from('profiles').select('follower_count').eq('user_id', artist_id).single();
+    if (p) await supabase.from('profiles').update({ follower_count: (p.follower_count || 0) + 1 }).eq('user_id', artist_id);
+    const { data: fp } = await supabase.from('profiles').select('username').eq('user_id', follower_id).single();
+    try { await supabase.from('notifications').insert({ user_id: artist_id, type: 'follow', title: 'Pengikut Baru', message: `${fp?.username || 'Seseorang'} mulai mengikuti kamu!`, is_read: false }); } catch(e) {}
+    return res.status(201).json({ following: true });
+  }
+  return res.status(405).json({ error: 'Method not allowed' });
+}
+
+// ── Notifications ──────────────────────────────────────────
+async function handleNotifications(req, res) {
+  if (req.method === 'GET') {
+    const { user_id } = req.query;
+    const { data, error } = await supabase.from('notifications').select('*').eq('user_id', user_id).order('created_at', { ascending: false }).limit(30);
+    if (error) return res.status(200).json({ notifications: [], unread: 0 });
+    const unread = (data || []).filter(n => !n.is_read).length;
+    return res.status(200).json({ notifications: data || [], unread });
+  }
+  if (req.method === 'PUT') {
+    const { user_id, id } = req.body;
+    if (id) await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    else await supabase.from('notifications').update({ is_read: true }).eq('user_id', user_id);
+    return res.status(200).json({ ok: true });
+  }
+  if (req.method === 'DELETE') {
+    const { user_id } = req.body;
+    await supabase.from('notifications').delete().eq('user_id', user_id);
+    return res.status(200).json({ ok: true });
+  }
+  return res.status(405).json({ error: 'Method not allowed' });
+}
+
+// ── Settings ───────────────────────────────────────────────
+async function handleSettings(req, res) {
+  if (req.method === 'GET') {
+    const { user_id } = req.query;
+    const { data, error } = await supabase.from('user_settings').select('*').eq('user_id', user_id).single();
+    if (error) return res.status(200).json({ user_id, theme: 'dark' });
+    return res.status(200).json(data || { user_id, theme: 'dark' });
+  }
+  if (req.method === 'POST') {
+    const { user_id, theme } = req.body;
+    const { data, error } = await supabase.from('user_settings').upsert({ user_id, theme, updated_at: new Date().toISOString() }).select().single();
+    if (error) return res.status(200).json({ user_id, theme });
+    return res.status(200).json(data);
+  }
+  return res.status(405).json({ error: 'Method not allowed' });
+}
+
+// ── Queue ──────────────────────────────────────────────────
+async function handleQueue(req, res) {
+  if (req.method === 'GET') {
+    const { user_id } = req.query;
+    const { data, error } = await supabase.from('queue_songs').select('*').eq('user_id', user_id).order('position');
+    if (error) return res.status(200).json([]);
+    const songIds = (data || []).map(q => q.song_id);
+    if (songIds.length === 0) return res.status(200).json([]);
+    const { data: songs } = await supabase.from('songs').select('*').in('id', songIds);
+    const genreIds = [...new Set((songs || []).map(s => s.genre_id).filter(Boolean))];
+    let genreMap = {};
+    if (genreIds.length > 0) { const { data: genres } = await supabase.from('genres').select('id,name,color').in('id', genreIds); if (genres) genres.forEach(g => { genreMap[g.id] = g; }); }
+    const songMap = {};
+    (songs || []).forEach(s => { songMap[s.id] = { ...s, genres: genreMap[s.genre_id] || null }; });
+    return res.status(200).json((data || []).map(q => ({ ...q, song: songMap[q.song_id] || null })).filter(q => q.song));
+  }
+  if (req.method === 'POST') {
+    const { user_id, song_id, action } = req.body;
+    if (action === 'clear') { await supabase.from('queue_songs').delete().eq('user_id', user_id); return res.status(200).json({ ok: true }); }
+    const { data: maxPos } = await supabase.from('queue_songs').select('position').eq('user_id', user_id).order('position', { ascending: false }).limit(1).single();
+    const position = (maxPos?.position || 0) + 1;
+    const { data, error } = await supabase.from('queue_songs').insert({ user_id, song_id, position }).select().single();
+    if (error) return res.status(200).json({ ok: true, note: 'queue not ready' });
+    return res.status(201).json(data);
+  }
+  if (req.method === 'DELETE') {
+    const { id, user_id } = req.body;
+    if (id) await supabase.from('queue_songs').delete().eq('id', id);
+    else await supabase.from('queue_songs').delete().eq('user_id', user_id);
+    return res.status(200).json({ ok: true });
+  }
+  return res.status(405).json({ error: 'Method not allowed' });
+}
+
+// ── Recommendations ────────────────────────────────────────
+async function handleRecommendations(req, res) {
+  const { user_id, limit = 10 } = req.query;
+  let recommendedSongs = [];
+  if (user_id) {
+    const { data: history } = await supabase.from('listen_history').select('song_id').eq('user_id', user_id).order('played_at', { ascending: false }).limit(50);
+    if (history && history.length > 0) {
+      const songIds = history.map(h => h.song_id);
+      const { data: listenedSongs } = await supabase.from('songs').select('genre_id').in('id', songIds);
+      const genreCount = {};
+      (listenedSongs || []).forEach(s => { if (s.genre_id) genreCount[s.genre_id] = (genreCount[s.genre_id] || 0) + 1; });
+      const topGenres = Object.entries(genreCount).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([id]) => id);
+      if (topGenres.length > 0) {
+        let q = supabase.from('songs').select('*').in('genre_id', topGenres).eq('is_active', true).order('play_count', { ascending: false }).limit(Number(limit));
+        if (songIds.length > 0) q = q.not('id', 'in', `(${songIds.slice(0, 50).join(',')})`);
+        const { data: songs } = await q;
+        recommendedSongs = songs || [];
+      }
+    }
+  }
+  if (recommendedSongs.length < Number(limit)) {
+    const existingIds = recommendedSongs.map(s => s.id);
+    let q = supabase.from('songs').select('*').eq('is_active', true).order('play_count', { ascending: false }).limit(Number(limit));
+    if (existingIds.length > 0) q = q.not('id', 'in', `(${existingIds.join(',')})`);
+    const { data: popular } = await q;
+    recommendedSongs = [...recommendedSongs, ...(popular || [])].slice(0, Number(limit));
+  }
+  const genreIds = [...new Set(recommendedSongs.map(s => s.genre_id).filter(Boolean))];
+  let genreMap = {};
+  if (genreIds.length > 0) { const { data: genres } = await supabase.from('genres').select('id,name,color').in('id', genreIds); if (genres) genres.forEach(g => { genreMap[g.id] = g; }); }
+  return res.status(200).json(recommendedSongs.map(s => ({ ...s, genres: s.genre_id ? genreMap[s.genre_id] || null : null })));
+}
+
+// ── Main Router ────────────────────────────────────────────
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
+  const route = req.query.route;
+  try {
+    if (route === 'artist-stats') return await handleArtistStats(req, res);
+    if (route === 'follows') return await handleFollows(req, res);
+    if (route === 'notifications') return await handleNotifications(req, res);
+    if (route === 'settings') return await handleSettings(req, res);
+    if (route === 'queue') return await handleQueue(req, res);
+    if (route === 'recommendations') return await handleRecommendations(req, res);
+    return res.status(400).json({ error: 'route tidak dikenali' });
+  } catch (err) {
+    console.error('Extras API error:', err);
+    res.status(500).json({ error: err.message });
+  }
+}
