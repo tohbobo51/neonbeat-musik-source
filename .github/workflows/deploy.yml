@@ -1,36 +1,35 @@
 name: Deploy to Vercel
-  on:
-    push:
-      branches: [main]
-    workflow_dispatch:
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
-  jobs:
-    deploy:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Setup Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: '20'
-            cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
 
-        - name: Install dependencies
-          run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-        - name: Build
-          run: npm run build
-          env:
-            VITE_SUPABASE_URL: https://hscwtfonjggdnnexztng.supabase.co
-            VITE_SUPABASE_ANON_KEY: sb_publishable_cxolPXgZlC7kFlyx_rWEow_Wz7_cemQ
-            VITE_GOOGLE_CLIENT_ID: 1065078894672-rmp5kp8vfjns5rn9kp5psfp16g691043.apps.googleusercontent.com
-            VITE_GOOGLE_AUTH_PROXY: https://designarena.ai/auth/google/callback
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://hscwtfonjggdnnexztng.supabase.co
+          VITE_SUPABASE_ANON_KEY: sb_publishable_cxolPXgZlC7kFlyx_rWEow_Wz7_cemQ
+          VITE_GOOGLE_CLIENT_ID: 1065078894672-rmp5kp8vfjns5rn9kp5psfp16g691043.apps.googleusercontent.com
+          VITE_GOOGLE_AUTH_PROXY: https://designarena.ai/auth/google/callback
 
-        - name: Deploy to Vercel
-          run: npx vercel deploy --prod --token $VERCEL_TOKEN --yes
-          env:
-            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  
+      - name: Deploy to Vercel
+        run: npx vercel deploy --prod --token $VERCEL_TOKEN --yes
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
