@@ -1,1 +1,25 @@
-{"data":"aW1wb3J0IHN1cGFiYXNlIGZyb20gJy4vX3N1cGFiYXNlLmpzJzsKCmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIGhhbmRsZXIocmVxLCByZXMpIHsKICByZXMuc2V0SGVhZGVyKCdBY2Nlc3MtQ29udHJvbC1BbGxvdy1PcmlnaW4nLCAnKicpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LU1ldGhvZHMnLCAnUE9TVCwgT1BUSU9OUycpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LUhlYWRlcnMnLCAnQ29udGVudC1UeXBlLCBBdXRob3JpemF0aW9uJyk7CiAgaWYgKHJlcS5tZXRob2QgPT09ICdPUFRJT05TJykgcmV0dXJuIHJlcy5zdGF0dXMoMjA0KS5lbmQoKTsKCiAgdHJ5IHsKICAgIGlmIChyZXEubWV0aG9kID09PSAnUE9TVCcpIHsKICAgICAgY29uc3QgeyBmaWxlbmFtZSwgY29udGVudFR5cGUsIGJ1Y2tldCB9ID0gcmVxLmJvZHk7CiAgICAgIGNvbnN0IGV4dCA9IGZpbGVuYW1lLnNwbGl0KCcuJykucG9wKCk7CiAgICAgIGNvbnN0IHNhZmVOYW1lID0gYCR7RGF0ZS5ub3coKX0tJHtNYXRoLnJhbmRvbSgpLnRvU3RyaW5nKDM2KS5zbGljZSgyKX0uJHtleHR9YDsKICAgICAgY29uc3QgeyBkYXRhLCBlcnJvciB9ID0gYXdhaXQgc3VwYWJhc2Uuc3RvcmFnZQogICAgICAgIC5mcm9tKGJ1Y2tldCB8fCAnbXVzaWMnKQogICAgICAgIC5jcmVhdGVTaWduZWRVcGxvYWRVcmwoc2FmZU5hbWUpOwogICAgICBpZiAoZXJyb3IpIHRocm93IGVycm9yOwogICAgICByZXR1cm4gcmVzLnN0YXR1cygyMDApLmpzb24oeyBzaWduZWRVcmw6IGRhdGEuc2lnbmVkVXJsLCBwYXRoOiBkYXRhLnBhdGgsIHRva2VuOiBkYXRhLnRva2VuIH0pOwogICAgfQogICAgcmVzLnN0YXR1cyg0MDUpLmpzb24oeyBlcnJvcjogJ01ldGhvZCBub3QgYWxsb3dlZCcgfSk7CiAgfSBjYXRjaCAoZXJyKSB7CiAgICBjb25zb2xlLmVycm9yKCdVcGxvYWQgZXJyb3I6JywgZXJyKTsKICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6IGVyci5tZXNzYWdlIH0pOwogIH0KfQo="}
+import supabase from './_supabase.js';
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
+  try {
+    if (req.method === 'POST') {
+      const { filename, contentType, bucket } = req.body;
+      const ext = filename.split('.').pop();
+      const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { data, error } = await supabase.storage
+        .from(bucket || 'music')
+        .createSignedUploadUrl(safeName);
+      if (error) throw error;
+      return res.status(200).json({ signedUrl: data.signedUrl, path: data.path, token: data.token });
+    }
+    res.status(405).json({ error: 'Method not allowed' });
+  } catch (err) {
+    console.error('Upload error:', err);
+    res.status(500).json({ error: err.message });
+  }
+}
