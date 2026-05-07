@@ -1,1 +1,56 @@
-{"data":"aW1wb3J0IHN1cGFiYXNlIGZyb20gJy4vX3N1cGFiYXNlLmpzJzsKCmFzeW5jIGZ1bmN0aW9uIGVucmljaFdpdGhTb25nKGl0ZW1zKSB7CiAgaWYgKCFpdGVtcyB8fCBpdGVtcy5sZW5ndGggPT09IDApIHJldHVybiBbXTsKICBjb25zdCBzb25nSWRzID0gWy4uLm5ldyBTZXQoaXRlbXMubWFwKGkgPT4gaS5zb25nX2lkKS5maWx0ZXIoQm9vbGVhbikpXTsKICBpZiAoc29uZ0lkcy5sZW5ndGggPT09IDApIHJldHVybiBpdGVtczsKCiAgY29uc3QgeyBkYXRhOiBzb25ncyB9ID0gYXdhaXQgc3VwYWJhc2UuZnJvbSgnc29uZ3MnKS5zZWxlY3QoJyonKS5pbignaWQnLCBzb25nSWRzKTsKICBjb25zdCBnZW5yZUlkcyA9IFsuLi5uZXcgU2V0KChzb25ncyB8fCBbXSkubWFwKHMgPT4gcy5nZW5yZV9pZCkuZmlsdGVyKEJvb2xlYW4pKV07CiAgbGV0IGdlbnJlTWFwID0ge307CiAgaWYgKGdlbnJlSWRzLmxlbmd0aCA+IDApIHsKICAgIGNvbnN0IHsgZGF0YTogZ2VucmVzIH0gPSBhd2FpdCBzdXBhYmFzZS5mcm9tKCdnZW5yZXMnKS5zZWxlY3QoJ2lkLCBuYW1lLCBjb2xvcicpLmluKCdpZCcsIGdlbnJlSWRzKTsKICAgIGlmIChnZW5yZXMpIGdlbnJlcy5mb3JFYWNoKGcgPT4geyBnZW5yZU1hcFtnLmlkXSA9IGc7IH0pOwogIH0KICBjb25zdCBzb25nTWFwID0ge307CiAgaWYgKHNvbmdzKSBzb25ncy5mb3JFYWNoKHMgPT4geyBzb25nTWFwW3MuaWRdID0geyAuLi5zLCBnZW5yZXM6IGdlbnJlTWFwW3MuZ2VucmVfaWRdIHx8IG51bGwgfTsgfSk7CiAgcmV0dXJuIGl0ZW1zLm1hcChpID0+ICh7IC4uLmksIHNvbmdzOiBzb25nTWFwW2kuc29uZ19pZF0gfHwgbnVsbCB9KSk7Cn0KCmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIGhhbmRsZXIocmVxLCByZXMpIHsKICByZXMuc2V0SGVhZGVyKCdBY2Nlc3MtQ29udHJvbC1BbGxvdy1PcmlnaW4nLCAnKicpOwogIHJlcy5zZXRIZWFkZXIoJ0FjY2Vzcy1Db250cm9sLUFsbG93LU1ldGhvZHMnLCAnR0VULCBQT1NULCBERUxFVEUsIE9QVElPTlMnKTsKICByZXMuc2V0SGVhZGVyKCdBY2Nlc3MtQ29udHJvbC1BbGxvdy1IZWFkZXJzJywgJ0NvbnRlbnQtVHlwZSwgQXV0aG9yaXphdGlvbicpOwogIGlmIChyZXEubWV0aG9kID09PSAnT1BUSU9OUycpIHJldHVybiByZXMuc3RhdHVzKDIwNCkuZW5kKCk7CgogIHRyeSB7CiAgICBpZiAocmVxLm1ldGhvZCA9PT0gJ0dFVCcpIHsKICAgICAgY29uc3QgeyB1c2VyX2lkIH0gPSByZXEucXVlcnk7CiAgICAgIGNvbnN0IHsgZGF0YSwgZXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlCiAgICAgICAgLmZyb20oJ2xpa2VzJykKICAgICAgICAuc2VsZWN0KCcqJykKICAgICAgICAuZXEoJ3VzZXJfaWQnLCB1c2VyX2lkKQogICAgICAgIC5vcmRlcignY3JlYXRlZF9hdCcsIHsgYXNjZW5kaW5nOiBmYWxzZSB9KTsKICAgICAgaWYgKGVycm9yKSB0aHJvdyBlcnJvcjsKICAgICAgY29uc3QgZW5yaWNoZWQgPSBhd2FpdCBlbnJpY2hXaXRoU29uZyhkYXRhIHx8IFtdKTsKICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoMjAwKS5qc29uKGVucmljaGVkKTsKICAgIH0KCiAgICBpZiAocmVxLm1ldGhvZCA9PT0gJ1BPU1QnKSB7CiAgICAgIGNvbnN0IHsgdXNlcl9pZCwgc29uZ19pZCB9ID0gcmVxLmJvZHk7CiAgICAgIGNvbnN0IHsgZGF0YTogZXhpc3RpbmcgfSA9IGF3YWl0IHN1cGFiYXNlLmZyb20oJ2xpa2VzJykuc2VsZWN0KCdpZCcpLmVxKCd1c2VyX2lkJywgdXNlcl9pZCkuZXEoJ3NvbmdfaWQnLCBzb25nX2lkKS5zaW5nbGUoKTsKICAgICAgaWYgKGV4aXN0aW5nKSB7CiAgICAgICAgYXdhaXQgc3VwYWJhc2UuZnJvbSgnbGlrZXMnKS5kZWxldGUoKS5lcSgndXNlcl9pZCcsIHVzZXJfaWQpLmVxKCdzb25nX2lkJywgc29uZ19pZCk7CiAgICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoMjAwKS5qc29uKHsgbGlrZWQ6IGZhbHNlIH0pOwogICAgICB9CiAgICAgIGNvbnN0IHsgZGF0YSwgZXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlLmZyb20oJ2xpa2VzJykuaW5zZXJ0KHsgdXNlcl9pZCwgc29uZ19pZCB9KS5zZWxlY3QoKS5zaW5nbGUoKTsKICAgICAgaWYgKGVycm9yKSB0aHJvdyBlcnJvcjsKICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoMjAxKS5qc29uKHsgbGlrZWQ6IHRydWUsIGRhdGEgfSk7CiAgICB9CgogICAgcmVzLnN0YXR1cyg0MDUpLmpzb24oeyBlcnJvcjogJ01ldGhvZCBub3QgYWxsb3dlZCcgfSk7CiAgfSBjYXRjaCAoZXJyKSB7CiAgICBjb25zb2xlLmVycm9yKCdMaWtlcyBBUEkgZXJyb3I6JywgZXJyKTsKICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6IGVyci5tZXNzYWdlIH0pOwogIH0KfQo="}
+import supabase from './_supabase.js';
+
+async function enrichWithSong(items) {
+  if (!items || items.length === 0) return [];
+  const songIds = [...new Set(items.map(i => i.song_id).filter(Boolean))];
+  if (songIds.length === 0) return items;
+
+  const { data: songs } = await supabase.from('songs').select('*').in('id', songIds);
+  const genreIds = [...new Set((songs || []).map(s => s.genre_id).filter(Boolean))];
+  let genreMap = {};
+  if (genreIds.length > 0) {
+    const { data: genres } = await supabase.from('genres').select('id, name, color').in('id', genreIds);
+    if (genres) genres.forEach(g => { genreMap[g.id] = g; });
+  }
+  const songMap = {};
+  if (songs) songs.forEach(s => { songMap[s.id] = { ...s, genres: genreMap[s.genre_id] || null }; });
+  return items.map(i => ({ ...i, songs: songMap[i.song_id] || null }));
+}
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
+  try {
+    if (req.method === 'GET') {
+      const { user_id } = req.query;
+      const { data, error } = await supabase
+        .from('likes')
+        .select('*')
+        .eq('user_id', user_id)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      const enriched = await enrichWithSong(data || []);
+      return res.status(200).json(enriched);
+    }
+
+    if (req.method === 'POST') {
+      const { user_id, song_id } = req.body;
+      const { data: existing } = await supabase.from('likes').select('id').eq('user_id', user_id).eq('song_id', song_id).single();
+      if (existing) {
+        await supabase.from('likes').delete().eq('user_id', user_id).eq('song_id', song_id);
+        return res.status(200).json({ liked: false });
+      }
+      const { data, error } = await supabase.from('likes').insert({ user_id, song_id }).select().single();
+      if (error) throw error;
+      return res.status(201).json({ liked: true, data });
+    }
+
+    res.status(405).json({ error: 'Method not allowed' });
+  } catch (err) {
+    console.error('Likes API error:', err);
+    res.status(500).json({ error: err.message });
+  }
+}
