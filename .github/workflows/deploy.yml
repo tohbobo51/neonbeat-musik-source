@@ -17,18 +17,21 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Build
-        run: npm run build
+      - name: Vercel build (frontend + API functions)
+        run: npx vercel build --prod --token $VERCEL_TOKEN --yes
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VITE_SUPABASE_URL: https://hscwtfonjggdnnexztng.supabase.co
           VITE_SUPABASE_ANON_KEY: sb_publishable_cxolPXgZlC7kFlyx_rWEow_Wz7_cemQ
           VITE_GOOGLE_CLIENT_ID: 1065078894672-rmp5kp8vfjns5rn9kp5psfp16g691043.apps.googleusercontent.com
           VITE_GOOGLE_AUTH_PROXY: https://designarena.ai/auth/google/callback
 
-      - name: Deploy to Vercel
-        run: npx vercel deploy --prod --token $VERCEL_TOKEN --yes
+      - name: Deploy prebuilt to Vercel production
+        run: npx vercel deploy --prebuilt --prod --token $VERCEL_TOKEN --yes
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
