@@ -16,6 +16,9 @@ import LikedPage from './pages/LikedPage';
 import PlaylistsPage from './pages/PlaylistsPage';
 import PlaylistDetailPage from './pages/PlaylistDetailPage';
 import ProfilePage from './pages/ProfilePage';
+import EditProfilePage from './pages/EditProfilePage';
+import SettingsPage from './pages/SettingsPage';
+import UserProfilePage from './pages/UserProfilePage';
 import UploadPage from './pages/UploadPage';
 import AdminPage from './pages/AdminPage';
 import MyMusicPage from './pages/MyMusicPage';
@@ -40,6 +43,9 @@ function AnimatedRoutes() {
         <Route path="/playlists" element={<PlaylistsPage />} />
         <Route path="/playlists/:id" element={<PlaylistDetailPage />} />
         <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/auth" replace />} />
+        <Route path="/profile/edit" element={user ? <EditProfilePage /> : <Navigate to="/auth" replace />} />
+        <Route path="/settings" element={user ? <SettingsPage /> : <Navigate to="/auth" replace />} />
+        <Route path="/user/:id" element={<UserProfilePage />} />
         <Route path="/upload" element={user ? <UploadPage /> : <Navigate to="/auth" replace />} />
         <Route path="/my-music" element={user ? <MyMusicPage /> : <Navigate to="/auth" replace />} />
         <Route path="/artist-stats" element={user ? <ArtistStatsPage /> : <Navigate to="/auth" replace />} />
