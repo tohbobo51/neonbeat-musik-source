@@ -76,10 +76,9 @@ export default function UploadPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ filename, contentType, bucket }),
     });
-    const { signedUrl, path } = await res.json();
+    const { signedUrl, downloadUrl } = await res.json();
     await fetch(signedUrl, { method: 'PUT', body: blob, headers: { 'Content-Type': contentType } });
-    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);
-    return publicUrl;
+    return downloadUrl;
   };
 
   const handleFetchYoutube = async () => {
@@ -93,19 +92,12 @@ export default function UploadPage() {
       const data = await res.json();
       
       if (data.success && data.result) {
-        // Ekstrak judul dan nama artis (jika formatnya "Artis - Judul")
         const fullTitle = data.result.title || '';
-        let extractedArtist = authorName;
-        let extractedTitle = fullTitle;
+        // Ambil nama artis dari nama channel YouTube
+        const channelName = data.result.channel || data.result.author || data.result.uploader || authorName;
         
-        if (fullTitle.includes('-')) {
-          const parts = fullTitle.split('-');
-          extractedArtist = parts[0].trim();
-          extractedTitle = parts.slice(1).join('-').trim();
-        }
-        
-        setTitle(extractedTitle);
-        setAuthorName(extractedArtist);
+        setTitle(fullTitle);
+        setAuthorName(channelName);
         setYoutubeAudioUrl(data.result.download);
         setYoutubeCoverUrl(data.result.thumbnail);
         setCoverPreview(data.result.thumbnail);
