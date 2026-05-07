@@ -1,5 +1,0 @@
-User wants to use a specific API: https://api.naze.biz.id/download/meganz?url=&apikey=nz-6d5d29dc61
-Wait, the endpoint says "meganz" (Mega.nz downloader). We need a YouTube downloader if they are pasting YouTube links.
-Let me check the base domain documentation or just tell them about the logic.
-If they have an API that returns direct links to the audio and thumbnail, we can absolutely integrate it into the React frontend!
-Let's explain how we will implement this.
