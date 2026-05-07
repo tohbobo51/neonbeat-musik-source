@@ -7,10 +7,13 @@ export interface Profile {
   id: string;
   user_id: string;
   username: string;
+  full_name?: string;
   bio: string;
   avatar_url: string;
   is_artist: boolean;
   role: UserRole;
+  follower_count?: number;
+  following_count?: number;
   created_at: string;
 }
 
@@ -24,6 +27,7 @@ interface AuthContextType {
   refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
   continueAsGuest: () => void;
+  displayName: string;
 }
 
 const AuthContext = createContext<AuthContextType>(null!);
@@ -35,7 +39,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isGuest, setIsGuest] = useState(false);
 
-  // Ambil atau buat profile untuk user
   const fetchOrCreateProfile = async (supabaseUser: any) => {
     try {
       const res = await fetch(`/api/profiles?user_id=${supabaseUser.id}`);
@@ -44,14 +47,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data && data.user_id) {
         setProfile(data);
       } else {
-        // User baru (misal dari Google OAuth) — buat profile otomatis
-        // Ambil nama lalu sanitasi: huruf kecil, hapus spasi & karakter aneh
         const rawName =
           supabaseUser.user_metadata?.name ||
           supabaseUser.user_metadata?.full_name ||
           supabaseUser.email?.split('@')[0] ||
           'user';
-        // Sanitasi: huruf kecil, spasi jadi underscore, hapus karakter selain a-z 0-9 _
         const username = rawName
           .toLowerCase()
           .replace(/\s+/g, '_')
@@ -70,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           body: JSON.stringify({
             user_id: supabaseUser.id,
             username,
+            full_name: rawName,
             avatar_url: avatarUrl,
             bio: '',
             role: 'user',
@@ -89,25 +90,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    // Cek session awal
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) fetchOrCreateProfile(session.user);
       setLoading(false);
     });
 
-    // Listen perubahan auth (login, logout, OAuth callback)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
       setIsGuest(false);
-
       if (session?.user) {
         await fetchOrCreateProfile(session.user);
       } else {
         setProfile(null);
       }
-
-      // Setelah OAuth redirect selesai, hapus params dari URL
       if (event === 'SIGNED_IN' && window.location.hash) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -131,9 +127,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const isAdmin = profile?.role === 'admin';
   const isArtist = profile?.role === 'artist' || profile?.is_artist === true || isAdmin;
+  const displayName = profile?.full_name || profile?.username || 'User';
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isGuest, isAdmin, isArtist, refreshProfile, signOut, continueAsGuest }}>
+    <AuthContext.Provider value={{ user, profile, loading, isGuest, isAdmin, isArtist, refreshProfile, signOut, continueAsGuest, displayName }}>
       {children}
     </AuthContext.Provider>
   );
