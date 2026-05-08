@@ -120,6 +120,21 @@ export default function PlaylistDetailPage() {
                     </span>
                   )}
                 </div>
+
+                {/* Kolaborator shortcut icon di pojok kanan atas */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                  onClick={() => setShowCollaborators(true)}
+                  title={isOwner ? 'Kelola Kolaborator' : 'Lihat Kolaborator'}
+                  className="flex-shrink-0 relative w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 hover:bg-purple-500/30 hover:border-purple-500/70 flex items-center justify-center text-purple-300 transition-all shadow-[0_0_12px_rgba(147,51,234,0.2)] hover:shadow-[0_0_20px_rgba(147,51,234,0.4)]"
+                >
+                  <Users size={18} />
+                  {collaboratorCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-pink-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center shadow-[0_0_6px_rgba(236,72,153,0.8)]">
+                      {collaboratorCount > 9 ? '9+' : collaboratorCount}
+                    </span>
+                  )}
+                </motion.button>
               </div>
 
               {/* Action buttons */}
