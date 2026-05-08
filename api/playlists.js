@@ -173,6 +173,22 @@ export default async function handler(req, res) {
           .select()
           .single();
         if (error) throw error;
+
+        // Kirim notifikasi real-time ke user yang diundang
+        try {
+          const [{ data: inviterP }, { data: pl }] = await Promise.all([
+            supabase.from('profiles').select('username').eq('user_id', invited_by).single(),
+            supabase.from('playlists').select('name').eq('id', playlist_id).single(),
+          ]);
+          await supabase.from('notifications').insert({
+            user_id: invited_user_id,
+            type: 'collaboration',
+            title: 'Undangan Kolaborasi Playlist',
+            message: `${inviterP?.username || 'Seseorang'} mengundang kamu ke playlist "${pl?.name || ''}"`,
+            is_read: false,
+          });
+        } catch {}
+
         return res.status(201).json(data);
       }
 
