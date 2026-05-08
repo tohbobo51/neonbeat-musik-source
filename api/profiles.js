@@ -169,6 +169,12 @@ export default async function handler(req, res) {
       let updates = { ...rest };
       if (full_name !== undefined) updates.full_name = full_name;
       if (is_verified !== undefined) updates.is_verified = is_verified;
+      // Selalu sanitize username: huruf kecil, tanpa spasi
+      if (username !== undefined) {
+        const clean = sanitizeUsername(username);
+        const unique = await makeUniqueUsername(clean, user_id);
+        updates.username = unique;
+      }
 
       let result = await supabase.from('profiles').update(updates).eq('user_id', user_id).select().single();
       if (result.error?.code === '42703') {
