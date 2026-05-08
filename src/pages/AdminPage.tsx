@@ -585,7 +585,7 @@ export default function AdminPage() {
 
       {/* Image crop modal */}
       <AnimatePresence>
-        {cropSrc && <ImageCropper src={cropSrc} onCrop={handleCrop} onClose={() => setCropSrc(null)} />}
+        {cropSrc && <ImageCropper imageSrc={cropSrc} onCrop={handleCrop} onCancel={() => setCropSrc(null)} />}
       </AnimatePresence>
     </div>
   );
