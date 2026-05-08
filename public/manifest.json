@@ -1,0 +1,35 @@
+{
+  "name": "NeonBeat - Musik Tanpa Batas",
+  "short_name": "NeonBeat",
+  "description": "Platform musik digital dengan nuansa neon. Dengarkan, upload, dan bagikan musik favoritmu.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0010",
+  "theme_color": "#9333ea",
+  "orientation": "portrait-primary",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["music", "entertainment"],
+  "shortcuts": [
+    {
+      "name": "Charts",
+      "short_name": "Charts",
+      "description": "Lagu terpopuler",
+      "url": "/trending"
+    },
+    {
+      "name": "Cari Musik",
+      "short_name": "Cari",
+      "description": "Cari lagu atau artis",
+      "url": "/search"
+    }
+  ]
+}
