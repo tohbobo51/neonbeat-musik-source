@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, Music, Tag, Users, BarChart3, Plus, Edit2, Trash2, X, Check, Upload, Image, Loader, Eye, EyeOff, Disc3, TrendingUp } from 'lucide-react';
+import { Crown, Music, Tag, Users, BarChart3, Plus, Edit2, Trash2, X, Check, Upload, Image, Loader, Eye, EyeOff, Disc3, TrendingUp, BadgeCheck, UserCog } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import ImageCropper from '../components/ImageCropper';
@@ -96,6 +96,11 @@ export default function AdminPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const audioRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
+
+  // Follower edit modal
+  const [followerModal, setFollowerModal] = useState<any>(null);
+  const [followerForm, setFollowerForm] = useState({ follower_count: 0, following_count: 0 });
+  const [savingFollower, setSavingFollower] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -206,7 +211,32 @@ export default function AdminPage() {
     fetchAll();
   };
 
-  const COLORS = ['#9333ea', '#a855f7', '#c026d3', '#db2777', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#06b6d4', '#ef4444'];
+  const toggleVerify = async (userId: string, currentVerified: boolean) => {
+    await fetch('/api/admin', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verify_user', id: userId, is_verified: !currentVerified }),
+    });
+    setUsers(prev => prev.map(u => u.user_id === userId ? { ...u, is_verified: !currentVerified } : u));
+  };
+
+  const openFollowerModal = (user: any) => {
+    setFollowerModal(user);
+    setFollowerForm({ follower_count: user.follower_count || 0, following_count: user.following_count || 0 });
+  };
+
+  const saveFollowerCount = async () => {
+    if (!followerModal) return;
+    setSavingFollower(true);
+    await fetch('/api/admin', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'set_follower_count', id: followerModal.user_id, ...followerForm }),
+    });
+    setUsers(prev => prev.map(u => u.user_id === followerModal.user_id ? { ...u, ...followerForm } : u));
+    setSavingFollower(false);
+    setFollowerModal(null);
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0010] pt-20 pb-32">
@@ -274,11 +304,12 @@ export default function AdminPage() {
                         className={`p-2 rounded-lg transition-all ${song.is_active ? 'text-green-400 bg-green-500/10' : 'text-red-400 bg-red-500/10'}`}>
                         {song.is_active ? <Eye size={16} /> : <EyeOff size={16} />}
                       </button>
-                      <button onClick={() => { setSongEditing(true); setSongForm({ ...song, genre_id: song.genre_id || '' }); setCoverPreview(song.cover_url || null); setSongModal(true); }}
+                      <button onClick={() => { setSongForm({ ...song, genre_id: song.genre_id || '' }); setCoverPreview(song.cover_url || null); setCoverBlob(null); setAudioFile(null); setSongEditing(true); setSongModal(true); }}
                         className="p-2 rounded-lg text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 transition-all">
                         <Edit2 size={16} />
                       </button>
-                      <button onClick={() => deleteSong(song.id)} className="p-2 rounded-lg text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-all">
+                      <button onClick={() => deleteSong(song.id)}
+                        className="p-2 rounded-lg text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-all">
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -296,59 +327,45 @@ export default function AdminPage() {
               <h2 className="text-xl font-bold text-white">Kelola Genre</h2>
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => { setGenreForm({ id: '', name: '', color: '#9333ea', description: '' }); setGenreEditing(true); }}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold shadow-[0_0_15px_rgba(147,51,234,0.4)]">
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold">
                 <Plus size={16} /> Tambah Genre
               </motion.button>
             </div>
             <AnimatePresence>
               {genreEditing && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                  className="bg-[#12001f]/80 border border-purple-500/30 rounded-2xl p-6 mb-4 overflow-hidden">
-                  <h3 className="text-white font-bold mb-4">{genreForm.id ? 'Edit Genre' : 'Tambah Genre'}</h3>
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <label className="text-purple-300/70 text-sm mb-1 block">Nama Genre</label>
-                      <input value={genreForm.name} onChange={e => setGenreForm(f => ({ ...f, name: e.target.value }))}
-                        className="w-full bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-400" placeholder="Nama genre" />
-                    </div>
-                    <div>
-                      <label className="text-purple-300/70 text-sm mb-1 block">Deskripsi</label>
-                      <input value={genreForm.description} onChange={e => setGenreForm(f => ({ ...f, description: e.target.value }))}
-                        className="w-full bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-400" placeholder="Deskripsi genre" />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="text-purple-300/70 text-sm mb-2 block">Warna</label>
-                    <div className="flex gap-2 flex-wrap">
-                      {COLORS.map(c => (
-                        <button key={c} onClick={() => setGenreForm(f => ({ ...f, color: c }))}
-                          className={`w-8 h-8 rounded-full transition-all ${genreForm.color === c ? 'scale-125 ring-2 ring-white ring-offset-2 ring-offset-[#12001f]' : 'hover:scale-110'}`}
-                          style={{ background: c, boxShadow: genreForm.color === c ? `0 0 10px ${c}` : 'none' }} />
-                      ))}
+                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                  className="bg-[#12001f]/80 border border-purple-500/30 rounded-2xl p-6 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input value={genreForm.name} onChange={e => setGenreForm(f => ({ ...f, name: e.target.value }))}
+                      placeholder="Nama genre" className="bg-[#0a0010] border border-purple-500/30 rounded-xl px-4 py-2 text-white placeholder-purple-300/30 focus:outline-none focus:border-purple-500" />
+                    <input value={genreForm.description} onChange={e => setGenreForm(f => ({ ...f, description: e.target.value }))}
+                      placeholder="Deskripsi" className="bg-[#0a0010] border border-purple-500/30 rounded-xl px-4 py-2 text-white placeholder-purple-300/30 focus:outline-none focus:border-purple-500" />
+                    <div className="flex items-center gap-3">
+                      <input type="color" value={genreForm.color} onChange={e => setGenreForm(f => ({ ...f, color: e.target.value }))}
+                        className="w-10 h-10 rounded-lg border-0 cursor-pointer" />
+                      <span className="text-purple-300/60 text-sm">Warna</span>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <motion.button onClick={saveGenre} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold">
-                      <Check size={16} className="inline mr-1" /> Simpan
-                    </motion.button>
-                    <button onClick={() => setGenreEditing(false)} className="px-6 py-2 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/10">Batal</button>
+                    <button onClick={saveGenre} className="px-4 py-2 bg-purple-600 rounded-xl text-white font-semibold flex items-center gap-2"><Check size={16} /> Simpan</button>
+                    <button onClick={() => setGenreEditing(false)} className="px-4 py-2 bg-[#0a0010] border border-purple-500/30 rounded-xl text-purple-300"><X size={16} /></button>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {genres.map(g => (
-                <div key={g.id} className="bg-[#12001f]/60 border border-purple-500/10 rounded-xl p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full flex-shrink-0" style={{ background: g.color, boxShadow: `0 0 12px ${g.color}80` }} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {genres.map(genre => (
+                <div key={genre.id} className="flex items-center gap-3 p-4 bg-[#12001f]/60 border border-purple-500/10 rounded-xl">
+                  <div className="w-8 h-8 rounded-full flex-shrink-0" style={{ backgroundColor: genre.color }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-white font-semibold">{g.name}</p>
-                    <p className="text-purple-300/40 text-xs truncate">{g.description || 'Tidak ada deskripsi'}</p>
+                    <p className="text-white font-semibold">{genre.name}</p>
+                    {genre.description && <p className="text-purple-300/50 text-xs truncate">{genre.description}</p>}
                   </div>
-                  <div className="flex gap-1">
-                    <button onClick={() => { setGenreForm({ id: g.id, name: g.name, color: g.color, description: g.description || '' }); setGenreEditing(true); }}
-                      className="p-2 rounded-lg text-purple-400 hover:bg-purple-500/10 transition-all"><Edit2 size={14} /></button>
-                    <button onClick={() => deleteGenre(g.id)} className="p-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-all"><Trash2 size={14} /></button>
+                  <div className="flex gap-2">
+                    <button onClick={() => { setGenreForm({ id: genre.id, name: genre.name, color: genre.color, description: genre.description || '' }); setGenreEditing(true); }}
+                      className="p-1.5 rounded-lg text-purple-400 hover:bg-purple-500/20"><Edit2 size={14} /></button>
+                    <button onClick={() => deleteGenre(genre.id)}
+                      className="p-1.5 rounded-lg text-red-400 hover:bg-red-500/20"><Trash2 size={14} /></button>
                   </div>
                 </div>
               ))}
@@ -359,24 +376,68 @@ export default function AdminPage() {
         {/* Users */}
         {tab === 'users' && (
           <div>
-            <h2 className="text-xl font-bold text-white mb-4">Kelola Pengguna ({users.length})</h2>
-            {loading ? <div className="space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-16 bg-[#12001f]/60 rounded-xl animate-pulse" />)}</div> : (
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-white">Kelola Pengguna</h2>
+              <span className="text-purple-300/50 text-sm">{users.length} pengguna</span>
+            </div>
+            {loading ? <div className="space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-20 bg-[#12001f]/60 rounded-xl animate-pulse" />)}</div> : (
               <div className="space-y-2">
-                {users.map(u => (
-                  <div key={u.id} className="flex items-center gap-4 p-3 bg-[#12001f]/60 border border-purple-500/10 rounded-xl">
+                {users.map(user => (
+                  <div key={user.user_id} className="flex items-center gap-3 p-3 bg-[#12001f]/60 border border-purple-500/10 rounded-xl">
+                    {/* Avatar */}
                     <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                      {u.avatar_url ? <img src={u.avatar_url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center"><Users size={16} className="text-purple-400" /></div>}
+                      {user.avatar_url
+                        ? <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
+                        : <div className="w-full h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center text-white font-bold text-sm">
+                            {(user.username || '?').charAt(0).toUpperCase()}
+                          </div>
+                      }
                     </div>
+
+                    {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold truncate">{u.username}</p>
-                      <p className="text-purple-300/40 text-xs">{new Date(u.created_at).toLocaleDateString('id-ID')} • {u.follower_count || 0} pengikut</p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-white font-semibold truncate">{user.full_name || user.username}</p>
+                        {user.is_verified && <BadgeCheck size={14} className="text-blue-400 flex-shrink-0" />}
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-purple-300/50">
+                        <span>@{user.username}</span>
+                        <span className="flex items-center gap-1">
+                          👥 {user.follower_count || 0} pengikut
+                        </span>
+                        <span>
+                          {user.following_count || 0} mengikuti
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${u.role === 'admin' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : u.role === 'artist' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'}`}>
-                        {u.role || 'user'}
-                      </span>
-                      <select value={u.role || 'user'} onChange={e => setUserRole(u.user_id, e.target.value)}
-                        className="bg-[#1a0030] border border-purple-500/30 rounded-lg px-2 py-1 text-white text-xs focus:outline-none">
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {/* Verify toggle */}
+                      <button
+                        onClick={() => toggleVerify(user.user_id, user.is_verified)}
+                        title={user.is_verified ? 'Hapus verifikasi' : 'Verifikasi artis'}
+                        className={`p-2 rounded-lg transition-all ${
+                          user.is_verified
+                            ? 'text-blue-400 bg-blue-500/20 hover:bg-blue-500/30'
+                            : 'text-purple-300/40 bg-[#12001f] hover:text-blue-400 hover:bg-blue-500/10 border border-purple-500/20'
+                        }`}>
+                        <BadgeCheck size={16} />
+                      </button>
+
+                      {/* Edit followers */}
+                      <button
+                        onClick={() => openFollowerModal(user)}
+                        title="Atur pengikut"
+                        className="p-2 rounded-lg text-purple-300/60 bg-[#12001f] hover:text-purple-300 hover:bg-purple-500/10 border border-purple-500/20 transition-all">
+                        <UserCog size={16} />
+                      </button>
+
+                      {/* Role selector */}
+                      <select
+                        value={user.role || 'user'}
+                        onChange={e => setUserRole(user.user_id, e.target.value)}
+                        className="bg-[#0a0010] border border-purple-500/30 text-purple-300 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-purple-500">
                         <option value="user">User</option>
                         <option value="artist">Artis</option>
                         <option value="admin">Admin</option>
@@ -390,81 +451,142 @@ export default function AdminPage() {
         )}
       </div>
 
-      {/* Song Modal */}
+      {/* Song modal */}
       <AnimatePresence>
         {songModal && (
-          <div className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-              className="w-full max-w-lg bg-[#12001f] border border-purple-500/30 rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(147,51,234,0.3)] max-h-[90vh] overflow-y-auto">
-              <div className="p-4 border-b border-purple-500/20 flex items-center justify-between sticky top-0 bg-[#12001f] z-10">
-                <h3 className="text-white font-bold">{songEditing ? 'Edit Lagu' : 'Tambah Lagu'}</h3>
-                <button onClick={() => setSongModal(false)} className="text-purple-300/60 hover:text-purple-300"><X size={20} /></button>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={e => { if (e.target === e.currentTarget) setSongModal(false); }}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-[#12001f] border border-purple-500/30 rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-white">{songEditing ? 'Edit Lagu' : 'Tambah Lagu'}</h3>
+                <button onClick={() => setSongModal(false)} className="text-purple-300/50 hover:text-white"><X size={20} /></button>
               </div>
-              <div className="p-6 space-y-4">
+              <div className="space-y-4">
+                <input value={songForm.title} onChange={e => setSongForm((f: any) => ({ ...f, title: e.target.value }))}
+                  placeholder="Judul lagu" className="w-full bg-[#0a0010] border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-purple-300/30 focus:outline-none focus:border-purple-500" />
+                <input value={songForm.artist_name} onChange={e => setSongForm((f: any) => ({ ...f, artist_name: e.target.value }))}
+                  placeholder="Nama artis" className="w-full bg-[#0a0010] border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-purple-300/30 focus:outline-none focus:border-purple-500" />
+                <select value={songForm.genre_id} onChange={e => setSongForm((f: any) => ({ ...f, genre_id: e.target.value }))}
+                  className="w-full bg-[#0a0010] border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                  <option value="">Pilih genre</option>
+                  {genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                </select>
+
+                {/* Cover upload */}
                 <div>
-                  <label className="text-purple-300/70 text-sm mb-2 block">Cover Art</label>
-                  <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-dashed border-purple-500/30 cursor-pointer hover:border-purple-400 transition-colors bg-[#1a0030] flex items-center justify-center"
-                      onClick={() => coverRef.current?.click()}>
-                      {coverPreview ? <img src={coverPreview} alt="" className="w-full h-full object-cover" /> : <Image size={20} className="text-purple-400/50" />}
-                    </div>
-                    <button type="button" onClick={() => coverRef.current?.click()}
-                      className="px-4 py-2 border border-purple-500/30 text-purple-300 rounded-xl text-sm hover:bg-purple-500/10">Pilih Gambar</button>
+                  <p className="text-purple-300/60 text-sm mb-2">Cover lagu</p>
+                  <div className="flex items-center gap-3">
+                    {coverPreview && <img src={coverPreview} alt="" className="w-16 h-16 rounded-lg object-cover" />}
+                    <button onClick={() => coverRef.current?.click()}
+                      className="flex items-center gap-2 px-4 py-2 bg-[#0a0010] border border-purple-500/30 rounded-xl text-purple-300 text-sm hover:border-purple-500">
+                      <Image size={16} /> Pilih Gambar
+                    </button>
                     <input ref={coverRef} type="file" accept="image/*" onChange={handleCoverSelect} className="hidden" />
                   </div>
                 </div>
+
+                {/* Audio upload */}
                 <div>
-                  <label className="text-purple-300/70 text-sm mb-1 block">Judul *</label>
-                  <input value={songForm.title} onChange={e => setSongForm((f: any) => ({ ...f, title: e.target.value }))}
-                    className="w-full bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-400" placeholder="Judul lagu" />
-                </div>
-                <div>
-                  <label className="text-purple-300/70 text-sm mb-1 block">Artis</label>
-                  <input value={songForm.artist_name} onChange={e => setSongForm((f: any) => ({ ...f, artist_name: e.target.value }))}
-                    className="w-full bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-400" placeholder="Nama artis" />
-                </div>
-                <div>
-                  <label className="text-purple-300/70 text-sm mb-1 block">Genre</label>
-                  <select value={songForm.genre_id} onChange={e => setSongForm((f: any) => ({ ...f, genre_id: e.target.value }))}
-                    className="w-full bg-[#1a0030] border border-purple-500/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-purple-400">
-                    <option value="">Pilih Genre</option>
-                    {genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-purple-300/70 text-sm mb-1 block">File Audio {!songEditing && '*'}</label>
-                  <div className={`flex-1 p-3 border-2 border-dashed rounded-xl cursor-pointer transition-all ${audioFile ? 'border-purple-500/60 bg-purple-500/10' : 'border-purple-500/30 hover:border-purple-400 bg-[#1a0030]'}`}
-                    onClick={() => audioRef.current?.click()}>
-                    {audioFile ? <p className="text-purple-300 text-sm truncate">{audioFile.name}</p> : <p className="text-purple-300/40 text-sm">Klik untuk pilih audio (MP3, WAV, dll)</p>}
+                  <p className="text-purple-300/60 text-sm mb-2">File audio</p>
+                  <div className="flex items-center gap-3">
+                    {audioFile && <span className="text-purple-300 text-sm truncate max-w-[150px]">{audioFile.name}</span>}
+                    <button onClick={() => audioRef.current?.click()}
+                      className="flex items-center gap-2 px-4 py-2 bg-[#0a0010] border border-purple-500/30 rounded-xl text-purple-300 text-sm hover:border-purple-500">
+                      <Upload size={16} /> Pilih Audio
+                    </button>
+                    <input ref={audioRef} type="file" accept="audio/*" onChange={e => setAudioFile(e.target.files?.[0] || null)} className="hidden" />
                   </div>
-                  <input ref={audioRef} type="file" accept="audio/*" onChange={e => setAudioFile(e.target.files?.[0] || null)} className="hidden" />
-                  {songEditing && !audioFile && <p className="text-purple-300/40 text-xs mt-1">Kosongkan jika tidak ingin mengganti audio</p>}
+                  {songEditing && songForm.audio_url && !audioFile && (
+                    <p className="text-purple-300/40 text-xs mt-1 truncate">Saat ini: {songForm.audio_url.slice(0, 60)}...</p>
+                  )}
                 </div>
+
+                <input value={songForm.audio_url} onChange={e => setSongForm((f: any) => ({ ...f, audio_url: e.target.value }))}
+                  placeholder="Atau tempel URL audio" className="w-full bg-[#0a0010] border border-purple-500/30 rounded-xl px-4 py-3 text-white placeholder-purple-300/30 focus:outline-none focus:border-purple-500 text-sm" />
+
                 {uploading && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Loader size={14} className="text-purple-400 animate-spin" />
-                      <span className="text-purple-300 text-sm">Mengupload... {uploadProgress}%</span>
-                    </div>
-                    <div className="h-1.5 bg-purple-900/40 rounded-full">
-                      <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
-                    </div>
+                  <div className="w-full bg-purple-950 rounded-full h-2">
+                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
                   </div>
                 )}
-                <div className="flex gap-3">
-                  <motion.button onClick={saveSong} disabled={uploading || !songForm.title.trim()} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    className="flex-1 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold disabled:opacity-50">
-                    {uploading ? 'Mengupload...' : songEditing ? 'Simpan Perubahan' : 'Upload Lagu'}
-                  </motion.button>
-                  <button onClick={() => setSongModal(false)} className="px-4 py-2.5 border border-purple-500/30 text-purple-300 rounded-xl hover:bg-purple-500/10">Batal</button>
-                </div>
+
+                <button onClick={saveSong} disabled={uploading}
+                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-bold flex items-center justify-center gap-2 disabled:opacity-50">
+                  {uploading ? <><Loader size={18} className="animate-spin" /> Mengupload...</> : <><Check size={18} /> {songEditing ? 'Simpan Perubahan' : 'Tambah Lagu'}</>}
+                </button>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {cropSrc && <ImageCropper imageSrc={cropSrc} onCrop={handleCrop} onCancel={() => setCropSrc(null)} />}
+      {/* Follower count edit modal */}
+      <AnimatePresence>
+        {followerModal && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={e => { if (e.target === e.currentTarget) setFollowerModal(null); }}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-[#12001f] border border-purple-500/30 rounded-2xl p-6 w-full max-w-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-white">Atur Pengikut</h3>
+                <button onClick={() => setFollowerModal(null)} className="text-purple-300/50 hover:text-white"><X size={20} /></button>
+              </div>
+
+              <div className="flex items-center gap-3 mb-6 p-3 bg-[#0a0010] rounded-xl">
+                <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                  {followerModal.avatar_url
+                    ? <img src={followerModal.avatar_url} alt="" className="w-full h-full object-cover" />
+                    : <div className="w-full h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center text-white font-bold text-sm">
+                        {(followerModal.username || '?').charAt(0).toUpperCase()}
+                      </div>
+                  }
+                </div>
+                <div>
+                  <p className="text-white font-semibold">{followerModal.full_name || followerModal.username}</p>
+                  <p className="text-purple-300/50 text-sm">@{followerModal.username}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div>
+                  <label className="text-purple-300/60 text-sm mb-1.5 block">Jumlah Pengikut</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={followerForm.follower_count}
+                    onChange={e => setFollowerForm(f => ({ ...f, follower_count: Number(e.target.value) }))}
+                    className="w-full bg-[#0a0010] border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-purple-300/60 text-sm mb-1.5 block">Jumlah Mengikuti</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={followerForm.following_count}
+                    onChange={e => setFollowerForm(f => ({ ...f, following_count: Number(e.target.value) }))}
+                    className="w-full bg-[#0a0010] border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              <button onClick={saveFollowerCount} disabled={savingFollower}
+                className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-bold flex items-center justify-center gap-2 disabled:opacity-50">
+                {savingFollower ? <Loader size={18} className="animate-spin" /> : <Check size={18} />}
+                Simpan
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Image crop modal */}
+      <AnimatePresence>
+        {cropSrc && <ImageCropper src={cropSrc} onCrop={handleCrop} onClose={() => setCropSrc(null)} />}
+      </AnimatePresence>
     </div>
   );
 }
