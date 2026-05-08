@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
+import supabase from '../lib/supabase';
 
 export type AnimationStyle = 'static' | 'wave' | 'vinyl';
 
@@ -53,7 +54,6 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [radioMode, setRadioModeState] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Refs to avoid stale closures in event handlers
   const queueRef = useRef<Song[]>([]);
   const queueIndexRef = useRef(0);
   const radioModeRef = useRef(false);
@@ -89,7 +89,6 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       const res = await fetch(`/api/extras?route=recommendations&limit=5${genreParam}`);
       const newSongs: Song[] = await res.json();
       if (Array.isArray(newSongs) && newSongs.length > 0) {
-        // Filter out songs already in queue
         const existingIds = new Set(queueRef.current.map(s => s.id));
         const fresh = newSongs.filter(s => !existingIds.has(s.id));
         if (fresh.length > 0) {
@@ -105,6 +104,26 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     } catch {}
     fetchingRadioRef.current = false;
   };
+
+  // Stop music when user logs out
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
+        const audio = audioRef.current;
+        if (audio) {
+          audio.pause();
+          audio.src = '';
+        }
+        setCurrentSong(null);
+        setIsPlaying(false);
+        setQueue([]);
+        setQueueIndex(0);
+        queueRef.current = [];
+        queueIndexRef.current = 0;
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const audio = new Audio();
@@ -122,16 +141,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       const q = queueRef.current;
       const idx = queueIndexRef.current;
       if (q.length === 0) return;
-
       const isLast = idx >= q.length - 1;
-
       if (radioModeRef.current && isLast) {
-        // Radio mode: fetch more songs
         fetchRadioSongs(q[idx]);
         return;
       }
-
-      // Normal: advance queue (loop if needed)
       const next = isLast ? 0 : idx + 1;
       if (!isLast || q.length > 1) {
         setQueueIndex(next);
