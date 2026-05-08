@@ -58,7 +58,12 @@ export default async function handler(req, res) {
       return res.status(200).json(enriched);
     }
     if (req.method === 'POST') {
-      const { title, artist_name, audio_url, cover_url, genre_id, artist_id, duration, lyrics } = req.body;
+      let { title, artist_name, audio_url, cover_url, genre_id, artist_id, duration, lyrics } = req.body;
+      // Jika artist_name tidak dikirim (misal profile belum load), ambil username dari profiles
+      if (!artist_name && artist_id) {
+        const { data: prof } = await supabase.from('profiles').select('username').eq('user_id', artist_id).single();
+        if (prof?.username) artist_name = prof.username;
+      }
       const { data, error } = await supabase.from('songs').insert({ title, artist_name, audio_url, cover_url, genre_id: genre_id || null, artist_id, duration, lyrics, is_active: true }).select('*').single();
       if (error) throw error;
       const [enriched] = await enrichSongs([data]);
