@@ -55,7 +55,10 @@ async function handleFollows(req, res) {
       const { data } = await supabase.from('follows').select('follower_id').eq('artist_id', artist_id);
       const ids = (data || []).map(f => f.follower_id);
       let profiles = [];
-      if (ids.length > 0) { const { data: p } = await supabase.from('profiles').select('user_id,username,avatar_url').in('user_id', ids); profiles = p || []; }
+      if (ids.length > 0) {
+        const { data: p } = await supabase.from('profiles').select('user_id,username,avatar_url').in('user_id', ids);
+        profiles = p || [];
+      }
       return res.status(200).json({ count: ids.length, profiles });
     }
     if (follower_id && artist_id) {
@@ -64,22 +67,68 @@ async function handleFollows(req, res) {
     }
     return res.status(400).json({ error: 'Parameter tidak lengkap' });
   }
+
   if (req.method === 'POST') {
     const { follower_id, artist_id } = req.body;
     const { data: existing } = await supabase.from('follows').select('id').eq('follower_id', follower_id).eq('artist_id', artist_id).single();
+
     if (existing) {
+      // UNFOLLOW
       await supabase.from('follows').delete().eq('follower_id', follower_id).eq('artist_id', artist_id);
-      const { data: p2 } = await supabase.from('profiles').select('follower_count').eq('user_id', artist_id).single();
-      if (p2) await supabase.from('profiles').update({ follower_count: Math.max(0, (p2.follower_count || 1) - 1) }).eq('user_id', artist_id);
+
+      // Decrease follower_count for artist
+      const { data: artistProfile } = await supabase.from('profiles').select('follower_count').eq('user_id', artist_id).single();
+      if (artistProfile) {
+        await supabase.from('profiles').update({
+          follower_count: Math.max(0, (artistProfile.follower_count || 1) - 1)
+        }).eq('user_id', artist_id);
+      }
+
+      // Decrease following_count for follower
+      const { data: followerProfile } = await supabase.from('profiles').select('following_count').eq('user_id', follower_id).single();
+      if (followerProfile) {
+        await supabase.from('profiles').update({
+          following_count: Math.max(0, (followerProfile.following_count || 1) - 1)
+        }).eq('user_id', follower_id);
+      }
+
       return res.status(200).json({ following: false });
     }
+
+    // FOLLOW
     await supabase.from('follows').insert({ follower_id, artist_id });
-    const { data: p } = await supabase.from('profiles').select('follower_count').eq('user_id', artist_id).single();
-    if (p) await supabase.from('profiles').update({ follower_count: (p.follower_count || 0) + 1 }).eq('user_id', artist_id);
+
+    // Increase follower_count for artist
+    const { data: artistProfile2 } = await supabase.from('profiles').select('follower_count').eq('user_id', artist_id).single();
+    if (artistProfile2) {
+      await supabase.from('profiles').update({
+        follower_count: (artistProfile2.follower_count || 0) + 1
+      }).eq('user_id', artist_id);
+    }
+
+    // Increase following_count for follower
+    const { data: followerProfile2 } = await supabase.from('profiles').select('following_count').eq('user_id', follower_id).single();
+    if (followerProfile2) {
+      await supabase.from('profiles').update({
+        following_count: (followerProfile2.following_count || 0) + 1
+      }).eq('user_id', follower_id);
+    }
+
+    // Send notification
     const { data: fp } = await supabase.from('profiles').select('username').eq('user_id', follower_id).single();
-    try { await supabase.from('notifications').insert({ user_id: artist_id, type: 'follow', title: 'Pengikut Baru', message: `${fp?.username || 'Seseorang'} mulai mengikuti kamu!`, is_read: false }); } catch (e) {}
+    try {
+      await supabase.from('notifications').insert({
+        user_id: artist_id,
+        type: 'follow',
+        title: 'Pengikut Baru',
+        message: `${fp?.username || 'Seseorang'} mulai mengikuti kamu!`,
+        is_read: false
+      });
+    } catch (e) {}
+
     return res.status(201).json({ following: true });
   }
+
   return res.status(405).json({ error: 'Method not allowed' });
 }
 
@@ -131,14 +180,20 @@ async function handleQueue(req, res) {
     const { data: songs } = await supabase.from('songs').select('*').in('id', songIds);
     const genreIds = [...new Set((songs || []).map(s => s.genre_id).filter(Boolean))];
     let genreMap = {};
-    if (genreIds.length > 0) { const { data: genres } = await supabase.from('genres').select('id,name,color').in('id', genreIds); if (genres) genres.forEach(g => { genreMap[g.id] = g; }); }
+    if (genreIds.length > 0) {
+      const { data: genres } = await supabase.from('genres').select('id,name,color').in('id', genreIds);
+      if (genres) genres.forEach(g => { genreMap[g.id] = g; });
+    }
     const songMap = {};
     (songs || []).forEach(s => { songMap[s.id] = { ...s, genres: genreMap[s.genre_id] || null }; });
     return res.status(200).json((data || []).map(q => ({ ...q, song: songMap[q.song_id] || null })).filter(q => q.song));
   }
   if (req.method === 'POST') {
     const { user_id, song_id, action } = req.body;
-    if (action === 'clear') { await supabase.from('queue_songs').delete().eq('user_id', user_id); return res.status(200).json({ ok: true }); }
+    if (action === 'clear') {
+      await supabase.from('queue_songs').delete().eq('user_id', user_id);
+      return res.status(200).json({ ok: true });
+    }
     const { data: maxPos } = await supabase.from('queue_songs').select('position').eq('user_id', user_id).order('position', { ascending: false }).limit(1).single();
     const position = (maxPos?.position || 0) + 1;
     const { data, error } = await supabase.from('queue_songs').insert({ user_id, song_id, position }).select().single();
@@ -190,18 +245,14 @@ async function handleRecommendations(req, res) {
 
 async function handleTrending(req, res) {
   const { genre_id, limit = 20 } = req.query;
-
-  // Try weekly trending from listen_history first
   try {
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const { data: history } = await supabase.from('listen_history').select('song_id').gte('played_at', sevenDaysAgo.toISOString());
-
     if (history && history.length > 0) {
       const songCount = {};
       history.forEach(h => { songCount[h.song_id] = (songCount[h.song_id] || 0) + 1; });
       const sortedIds = Object.entries(songCount).sort((a, b) => b[1] - a[1]).slice(0, Number(limit) * 2).map(([id]) => id);
-
       let q = supabase.from('songs').select('*').in('id', sortedIds).eq('is_active', true);
       if (genre_id) q = q.eq('genre_id', genre_id);
       const { data: songs } = await q;
@@ -212,8 +263,6 @@ async function handleTrending(req, res) {
       }
     }
   } catch {}
-
-  // Fallback: all-time by play_count
   let q = supabase.from('songs').select('*').eq('is_active', true).order('play_count', { ascending: false }).limit(Number(limit));
   if (genre_id) q = q.eq('genre_id', genre_id);
   const { data, error } = await q;
