@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Edit2, MoreVertical, Share2, Music, Disc3, Settings, User } from 'lucide-react';
+import { Edit2, MoreVertical, Share2, Music, Disc3, Settings, User, BadgeCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import { useNavigate } from 'react-router-dom';
@@ -81,7 +81,10 @@ export default function ProfilePage() {
 
         {/* Name + username + counts */}
         <div className="mb-4">
-          <h1 className="text-2xl font-black text-white leading-tight">{displayName}</h1>
+          <h1 className="text-2xl font-black text-white leading-tight flex items-center gap-2">
+            {displayName}
+            {profile?.is_verified && <BadgeCheck size={22} className="text-blue-400 flex-shrink-0" />}
+          </h1>
           <p className="text-purple-300/50 text-sm">@{profile.username}</p>
           {profile.bio && <p className="text-purple-300/60 text-sm mt-1.5">{profile.bio}</p>}
           <div className="flex items-center gap-4 mt-2">
