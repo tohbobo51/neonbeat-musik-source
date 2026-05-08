@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, MoreVertical, Share2, Music, Disc3, ListMusic, User } from 'lucide-react';
+import { ArrowLeft, MoreVertical, Share2, Music, Disc3, ListMusic, User, BadgeCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import { useNavigate, useParams, Link } from 'react-router-dom';
@@ -108,7 +108,10 @@ export default function UserProfilePage() {
         <div className="mb-4">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-black text-white leading-tight">{displayName}</h1>
+              <h1 className="text-2xl font-black text-white leading-tight flex items-center gap-2">
+                {displayName}
+                {profile.is_verified && <BadgeCheck size={22} className="text-blue-400 flex-shrink-0" />}
+              </h1>
               <p className="text-purple-300/50 text-sm">@{profile.username}</p>
             </div>
             {isArtist && (
