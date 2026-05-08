@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Music, Home, Search, Library, History, User, LogOut, Crown, Menu, X, Heart, ListMusic, Upload, Sparkles, BarChart3, Settings } from 'lucide-react';
+import { Music, Home, Search, Library, History, User, LogOut, Crown, Menu, X, Heart, ListMusic, Upload, Sparkles, BarChart3, Settings, TrendingUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 import QueuePanel from './QueuePanel';
@@ -18,6 +18,7 @@ export default function Navbar() {
   const navLinks = [
     { to: '/', icon: Home, label: 'Beranda' },
     { to: '/search', icon: Search, label: 'Cari' },
+    { to: '/trending', icon: TrendingUp, label: 'Charts' },
     { to: '/library', icon: Library, label: 'Library' },
     { to: '/recommendations', icon: Sparkles, label: 'Rekomendasi' },
     ...(!isGuest && user ? [
