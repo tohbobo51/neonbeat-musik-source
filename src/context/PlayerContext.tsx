@@ -14,7 +14,7 @@ export interface Song {
   play_count: number;
   is_active: boolean;
   genres?: { name: string; color: string };
-  profiles?: { username: string; avatar_url: string };
+  profiles?: { username: string; avatar_url: string; is_verified?: boolean };
 }
 
 interface PlayerContextType {
@@ -25,7 +25,9 @@ interface PlayerContextType {
   duration: number;
   volume: number;
   animStyle: AnimationStyle;
+  radioMode: boolean;
   setAnimStyle: (s: AnimationStyle) => void;
+  setRadioMode: (on: boolean) => void;
   playSong: (song: Song, queue?: Song[]) => void;
   togglePlay: () => void;
   nextSong: () => void;
@@ -48,34 +50,112 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [duration, setDuration] = useState(0);
   const [volume, setVolumeState] = useState(0.8);
   const [animStyle, setAnimStyle] = useState<AnimationStyle>('vinyl');
+  const [radioMode, setRadioModeState] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Refs to avoid stale closures in event handlers
+  const queueRef = useRef<Song[]>([]);
+  const queueIndexRef = useRef(0);
+  const radioModeRef = useRef(false);
+  const fetchingRadioRef = useRef(false);
+
+  useEffect(() => { queueRef.current = queue; }, [queue]);
+  useEffect(() => { queueIndexRef.current = queueIndex; }, [queueIndex]);
+
+  const setRadioMode = (on: boolean) => {
+    radioModeRef.current = on;
+    setRadioModeState(on);
+  };
+
+  const playAtIndex = (songs: Song[], idx: number) => {
+    if (idx < 0 || idx >= songs.length) return;
+    const song = songs[idx];
+    setCurrentSong(song);
+    setQueueIndex(idx);
+    setCurrentTime(0);
+    setDuration(0);
+    const audio = audioRef.current!;
+    audio.pause();
+    audio.src = song.audio_url;
+    audio.load();
+    audio.play().catch(() => setIsPlaying(false));
+  };
+
+  const fetchRadioSongs = async (baseSong: Song | null) => {
+    if (fetchingRadioRef.current || !baseSong) return;
+    fetchingRadioRef.current = true;
+    try {
+      const genreParam = baseSong.genre_id ? `&genre_id=${baseSong.genre_id}` : '';
+      const res = await fetch(`/api/extras?route=recommendations&limit=5${genreParam}`);
+      const newSongs: Song[] = await res.json();
+      if (Array.isArray(newSongs) && newSongs.length > 0) {
+        // Filter out songs already in queue
+        const existingIds = new Set(queueRef.current.map(s => s.id));
+        const fresh = newSongs.filter(s => !existingIds.has(s.id));
+        if (fresh.length > 0) {
+          setQueue(prev => {
+            const updated = [...prev, ...fresh];
+            queueRef.current = updated;
+            return updated;
+          });
+          const nextIdx = queueRef.current.length - fresh.length;
+          setTimeout(() => playAtIndex(queueRef.current, nextIdx), 100);
+        }
+      }
+    } catch {}
+    fetchingRadioRef.current = false;
+  };
 
   useEffect(() => {
     const audio = new Audio();
-    audio.crossOrigin = 'anonymous'; // penting untuk CORS
+    audio.crossOrigin = 'anonymous';
     audioRef.current = audio;
     audio.volume = volume;
+
     audio.addEventListener('timeupdate', () => setCurrentTime(audio.currentTime));
     audio.addEventListener('durationchange', () => setDuration(isNaN(audio.duration) ? 0 : audio.duration));
-    audio.addEventListener('ended', () => nextSong());
     audio.addEventListener('play', () => setIsPlaying(true));
     audio.addEventListener('pause', () => setIsPlaying(false));
-    audio.addEventListener('error', (e) => {
-      console.error('Audio error:', e);
-      setIsPlaying(false);
+    audio.addEventListener('error', () => setIsPlaying(false));
+
+    audio.addEventListener('ended', () => {
+      const q = queueRef.current;
+      const idx = queueIndexRef.current;
+      if (q.length === 0) return;
+
+      const isLast = idx >= q.length - 1;
+
+      if (radioModeRef.current && isLast) {
+        // Radio mode: fetch more songs
+        fetchRadioSongs(q[idx]);
+        return;
+      }
+
+      // Normal: advance queue (loop if needed)
+      const next = isLast ? 0 : idx + 1;
+      if (!isLast || q.length > 1) {
+        setQueueIndex(next);
+        setCurrentSong(q[next]);
+        setCurrentTime(0);
+        setDuration(0);
+        audio.pause();
+        audio.src = q[next].audio_url;
+        audio.load();
+        audio.play().catch(() => setIsPlaying(false));
+      }
     });
-    audio.addEventListener('canplay', () => {
-      // Audio siap diputar
-      console.log('Audio siap diputar');
-    });
+
     return () => { audio.pause(); audio.src = ''; };
   }, []);
 
   const playSong = (song: Song, newQueue?: Song[]) => {
     if (newQueue) {
       setQueue(newQueue);
+      queueRef.current = newQueue;
       const idx = newQueue.findIndex(s => s.id === song.id);
-      setQueueIndex(idx >= 0 ? idx : 0);
+      const realIdx = idx >= 0 ? idx : 0;
+      setQueueIndex(realIdx);
+      queueIndexRef.current = realIdx;
     }
     setCurrentSong(song);
     setCurrentTime(0);
@@ -83,11 +163,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const audio = audioRef.current!;
     audio.pause();
     audio.src = song.audio_url;
-    audio.load(); // paksa reload
-    audio.play().catch(err => {
-      console.error('Play error:', err);
-      setIsPlaying(false);
-    });
+    audio.load();
+    audio.play().catch(() => setIsPlaying(false));
   };
 
   const togglePlay = () => {
@@ -98,17 +175,23 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   };
 
   const nextSong = () => {
-    if (queue.length === 0) return;
-    const next = (queueIndex + 1) % queue.length;
+    const q = queueRef.current;
+    const idx = queueIndexRef.current;
+    if (q.length === 0) return;
+    const next = (idx + 1) % q.length;
     setQueueIndex(next);
-    playSong(queue[next]);
+    queueIndexRef.current = next;
+    playSong(q[next]);
   };
 
   const prevSong = () => {
-    if (queue.length === 0) return;
-    const prev = (queueIndex - 1 + queue.length) % queue.length;
+    const q = queueRef.current;
+    const idx = queueIndexRef.current;
+    if (q.length === 0) return;
+    const prev = (idx - 1 + q.length) % q.length;
     setQueueIndex(prev);
-    playSong(queue[prev]);
+    queueIndexRef.current = prev;
+    playSong(q[prev]);
   };
 
   const seek = (t: number) => {
@@ -121,13 +204,17 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addToQueue = (song: Song) => {
-    setQueue(q => [...q, song]);
+    setQueue(q => {
+      const updated = [...q, song];
+      queueRef.current = updated;
+      return updated;
+    });
   };
 
   return (
     <PlayerContext.Provider value={{
-      currentSong, queue, isPlaying, currentTime, duration, volume, animStyle,
-      setAnimStyle, playSong, togglePlay, nextSong, prevSong, seek, setVolume, addToQueue, audioRef
+      currentSong, queue, isPlaying, currentTime, duration, volume, animStyle, radioMode,
+      setAnimStyle, setRadioMode, playSong, togglePlay, nextSong, prevSong, seek, setVolume, addToQueue, audioRef
     }}>
       {children}
     </PlayerContext.Provider>
