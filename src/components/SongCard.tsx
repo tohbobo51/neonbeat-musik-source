@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { Play, Heart, Plus, MoreVertical, Disc3 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Heart, Plus, Share2, Copy, MessageCircle, BadgeCheck, Disc3 } from 'lucide-react';
 import { useState } from 'react';
 import { usePlayer, Song } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
@@ -12,11 +12,40 @@ interface Props {
   onAddToPlaylist?: (song: Song) => void;
 }
 
+function shareSong(song: Song) {
+  const url = `${window.location.origin}/?song=${song.id}`;
+  const text = `🎵 Dengerin "${song.title}" oleh ${song.artist_name} di NeonBeat!\n${url}`;
+  return { url, text };
+}
+
 export default function SongCard({ song, queue, onLike, isLiked, onAddToPlaylist }: Props) {
   const { playSong, currentSong, isPlaying } = usePlayer();
   const { user, isGuest } = useAuth();
-  const [showMenu, setShowMenu] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const [copied, setCopied] = useState(false);
   const isActive = currentSong?.id === song.id;
+  const isVerified = song.profiles?.is_verified;
+
+  const handleCopyLink = async () => {
+    const { url } = shareSong(song);
+    await navigator.clipboard.writeText(url).catch(() => {});
+    setCopied(true);
+    setTimeout(() => { setCopied(false); setShowShare(false); }, 1500);
+  };
+
+  const handleWhatsApp = () => {
+    const { text } = shareSong(song);
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    setShowShare(false);
+  };
+
+  const handleNativeShare = async () => {
+    const { url, text } = shareSong(song);
+    try {
+      await navigator.share({ title: song.title, text, url });
+    } catch {}
+    setShowShare(false);
+  };
 
   return (
     <motion.div
@@ -64,7 +93,10 @@ export default function SongCard({ song, queue, onLike, isLiked, onAddToPlaylist
       {/* Info */}
       <div className="min-w-0">
         <p className={`font-semibold text-sm truncate ${isActive ? 'text-purple-300' : 'text-white'}`}>{song.title}</p>
-        <p className="text-purple-300/50 text-xs truncate mt-0.5">{song.artist_name}</p>
+        <p className="text-purple-300/50 text-xs truncate mt-0.5 flex items-center gap-1">
+          {song.artist_name}
+          {isVerified && <BadgeCheck size={11} className="text-blue-400 flex-shrink-0" />}
+        </p>
         {song.genres && (
           <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs"
             style={{ background: `${song.genres.color}20`, color: song.genres.color }}>
@@ -73,7 +105,7 @@ export default function SongCard({ song, queue, onLike, isLiked, onAddToPlaylist
         )}
       </div>
 
-      {/* Actions */}
+      {/* Action buttons */}
       <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
         {user && !isGuest && onLike && (
           <button onClick={() => onLike(song.id)}
@@ -88,7 +120,39 @@ export default function SongCard({ song, queue, onLike, isLiked, onAddToPlaylist
             <Plus size={14} />
           </button>
         )}
+        {/* Share button */}
+        <div className="relative">
+          <button onClick={() => setShowShare(v => !v)} className="p-1.5 rounded-lg text-purple-300/60 hover:text-purple-300 bg-black/30">
+            <Share2 size={14} />
+          </button>
+          <AnimatePresence>
+            {showShare && (
+              <motion.div initial={{ opacity: 0, scale: 0.85, y: -4 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.85 }}
+                className="absolute right-0 top-full mt-1 w-44 bg-[#1a0030] border border-purple-500/30 rounded-xl shadow-[0_0_20px_rgba(0,0,0,0.6)] overflow-hidden z-20">
+                <button onClick={handleCopyLink}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-white hover:bg-purple-500/10 transition-colors text-xs">
+                  <Copy size={13} className="text-purple-400" />
+                  {copied ? 'Tersalin!' : 'Salin Link'}
+                </button>
+                <button onClick={handleWhatsApp}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-white hover:bg-green-500/10 transition-colors text-xs">
+                  <MessageCircle size={13} className="text-green-400" />
+                  Bagikan ke WhatsApp
+                </button>
+                {typeof navigator !== 'undefined' && 'share' in navigator && (
+                  <button onClick={handleNativeShare}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-white hover:bg-purple-500/10 transition-colors text-xs">
+                    <Share2 size={13} className="text-purple-400" />
+                    Bagikan lainnya...
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
+
+      {showShare && <div className="fixed inset-0 z-10" onClick={() => setShowShare(false)} />}
     </motion.div>
   );
 }
