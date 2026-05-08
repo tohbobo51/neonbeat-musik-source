@@ -442,7 +442,7 @@ export default function MusicPlayer() {
               </div>
 
               <h2 className="text-2xl font-bold text-white mb-1">{currentSong.title}</h2>
-              <p className="text-purple-300/70 mb-2">{currentSong.artist_name}</p>
+              <p className="text-purple-300/70 mb-2">{currentSong.profiles?.username || currentSong.artist_name}</p>
               {currentSong.genres && (
                 <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-6"
                   style={{ background: `${currentSong.genres.color}30`, color: currentSong.genres.color, border: `1px solid ${currentSong.genres.color}50` }}>
@@ -538,7 +538,7 @@ export default function MusicPlayer() {
             </div>
             <div className="min-w-0 text-left">
               <p className="text-white text-sm font-semibold truncate">{currentSong.title}</p>
-              <p className="text-purple-300/60 text-xs truncate">{currentSong.artist_name}</p>
+              <p className="text-purple-300/60 text-xs truncate">{currentSong.profiles?.username || currentSong.artist_name}</p>
             </div>
             <ChevronUp size={16} className="text-purple-300/60 flex-shrink-0" />
           </button>
