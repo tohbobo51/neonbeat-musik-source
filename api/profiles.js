@@ -21,6 +21,9 @@ async function makeUniqueUsername(base, excludeUserId = null) {
   return `${clean}_${Math.floor(Math.random() * 9000 + 1000)}`;
 }
 
+const SAFE_SELECT = 'user_id, username, avatar_url, is_artist, role, follower_count, following_count, bio, is_verified';
+const FULL_SELECT = `${SAFE_SELECT}, full_name`;
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -28,13 +31,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   try {
     if (req.method === 'GET') {
-      const { user_id, username, check_username, get_email, search, is_artist } = req.query;
-
-      if (get_email && user_id) {
-        const { data: userData, error: userErr } = await supabase.auth.admin.getUserById(user_id);
-        if (userErr || !userData?.user) return res.status(404).json({ email: null });
-        return res.status(200).json({ email: userData.user.email });
-      }
+      const { user_id, username, check_username, search, is_artist } = req.query;
 
       if (check_username) {
         const clean = sanitizeUsername(check_username);
@@ -42,30 +39,56 @@ export default async function handler(req, res) {
         return res.status(200).json({ available: !taken, suggestion: clean });
       }
 
-      // Search profiles by username or full_name
+      // Search profiles — safe fallback if full_name column doesn't exist
       if (search) {
-        let query = supabase.from('profiles').select('user_id, username, full_name, avatar_url, is_artist, role, follower_count, following_count, bio');
-        if (is_artist === 'true') query = query.eq('is_artist', true);
-        query = query.ilike('username', `%${search}%`);
-        const { data, error } = await query.limit(30);
-        if (error) {
-          // Fallback without full_name if column doesn't exist
-          let q2 = supabase.from('profiles').select('user_id, username, avatar_url, is_artist, role, follower_count, following_count, bio');
-          if (is_artist === 'true') q2 = q2.eq('is_artist', true);
-          q2 = q2.ilike('username', `%${search}%`);
-          const { data: d2 } = await q2.limit(30);
-          return res.status(200).json(d2 || []);
+        const term = search.replace(/[%_]/g, '\\$&'); // escape special chars
+
+        // Try searching username OR full_name
+        let found = null;
+        try {
+          let q = supabase.from('profiles').select(FULL_SELECT)
+            .or(`username.ilike.%${term}%,full_name.ilike.%${term}%`);
+          if (is_artist === 'true') q = q.eq('is_artist', true);
+          const { data, error } = await q.limit(30);
+          if (!error) found = data;
+        } catch {}
+
+        // Fallback: username only (no full_name column)
+        if (found === null) {
+          try {
+            let q = supabase.from('profiles').select(SAFE_SELECT)
+              .ilike('username', `%${term}%`);
+            if (is_artist === 'true') q = q.eq('is_artist', true);
+            const { data } = await q.limit(30);
+            found = data;
+          } catch {}
         }
-        return res.status(200).json(data || []);
+
+        return res.status(200).json(found || []);
       }
 
-      // Get single profile
-      let query = supabase.from('profiles').select('*');
-      if (user_id) query = query.eq('user_id', user_id);
-      if (username) query = query.eq('username', username);
-      const { data, error } = await query.single();
-      if (error && error.code !== 'PGRST116') throw error;
-      return res.status(200).json(data || null);
+      // Get single profile — try with full_name, fallback without
+      if (user_id || username) {
+        let result = null;
+        try {
+          let q = supabase.from('profiles').select('*');
+          if (user_id) q = q.eq('user_id', user_id);
+          if (username) q = q.eq('username', username);
+          const { data, error } = await q.single();
+          if (!error) result = data;
+        } catch {}
+
+        if (result === null) {
+          let q = supabase.from('profiles').select(SAFE_SELECT);
+          if (user_id) q = q.eq('user_id', user_id);
+          if (username) q = q.eq('username', username);
+          const { data } = await q.single();
+          result = data;
+        }
+        return res.status(200).json(result || null);
+      }
+
+      return res.status(400).json({ error: 'user_id, username, atau search diperlukan' });
     }
 
     if (req.method === 'POST') {
@@ -77,7 +100,6 @@ export default async function handler(req, res) {
       };
       if (full_name !== undefined) insertData.full_name = full_name;
 
-      // Try with full_name, fallback without
       let result = await supabase.from('profiles').upsert(insertData).select().single();
       if (result.error?.code === '42703') {
         delete insertData.full_name;
@@ -88,18 +110,19 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PUT') {
-      const { user_id, username, full_name, ...rest } = req.body;
-      // Username is PERMANENT — cannot be changed via PUT
+      const { user_id, username, full_name, is_verified, ...rest } = req.body;
+      // username PERMANENT — tidak bisa diubah via PUT
       let updates = { ...rest };
       if (full_name !== undefined) updates.full_name = full_name;
+      if (is_verified !== undefined) updates.is_verified = is_verified;
 
-      // Try update with all fields (including full_name if provided)
       let result = await supabase.from('profiles').update(updates).eq('user_id', user_id).select().single();
-
-      // If column doesn't exist (42703), retry without full_name
       if (result.error?.code === '42703') {
-        delete updates.full_name;
-        result = await supabase.from('profiles').update(updates).eq('user_id', user_id).select().single();
+        // Remove unknown columns and retry
+        const safeUpdates = {};
+        const knownCols = ['bio', 'avatar_url', 'is_artist', 'role', 'follower_count', 'following_count'];
+        knownCols.forEach(k => { if (updates[k] !== undefined) safeUpdates[k] = updates[k]; });
+        result = await supabase.from('profiles').update(safeUpdates).eq('user_id', user_id).select().single();
       }
       if (result.error) throw result.error;
       return res.status(200).json(result.data);
