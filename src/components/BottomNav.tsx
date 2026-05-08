@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Library, User, Sparkles, Crown } from 'lucide-react';
+import { Home, Search, Library, User, Sparkles, Crown, TrendingUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import { motion } from 'framer-motion';
@@ -14,7 +14,8 @@ export default function BottomNav() {
   const links = [
     { to: '/', icon: Home, label: 'Beranda' },
     { to: '/search', icon: Search, label: 'Cari' },
-    { to: '/recommendations', icon: Sparkles, label: 'Untuk Kamu' },
+    { to: '/trending', icon: TrendingUp, label: 'Charts' },
+    { to: '/recommendations', icon: Sparkles, label: 'Untukmu' },
     { to: '/library', icon: Library, label: 'Library' },
     ...(isAdmin ? [{ to: '/admin', icon: Crown, label: 'Admin' }] : []),
     { to: user && !isGuest ? '/profile' : '/auth', icon: User, label: user && !isGuest ? 'Profil' : 'Masuk' },
@@ -39,7 +40,7 @@ export default function BottomNav() {
                   <Icon size={20} className={`transition-colors ${active ? 'text-purple-400' : 'text-purple-300/40 group-hover:text-purple-300/70'}`}
                     style={active ? { filter: 'drop-shadow(0 0 6px rgba(168,85,247,0.8))' } : {}} />
                 </motion.div>
-                <span className={`text-[10px] font-medium transition-colors ${active ? 'text-purple-400' : 'text-purple-300/40'}`}>{label}</span>
+                <span className={`text-[9px] font-medium transition-colors ${active ? 'text-purple-400' : 'text-purple-300/40'}`}>{label}</span>
               </Link>
             );
           })}
