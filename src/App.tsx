@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { PlayerProvider } from './context/PlayerContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -7,6 +8,7 @@ import { handleGoogleRedirect } from './lib/googleAuth';
 import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
 import MusicPlayer from './components/MusicPlayer';
+import OnboardingModal from './components/OnboardingModal';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
@@ -24,6 +26,7 @@ import AdminPage from './pages/AdminPage';
 import MyMusicPage from './pages/MyMusicPage';
 import ArtistStatsPage from './pages/ArtistStatsPage';
 import RecommendationsPage from './pages/RecommendationsPage';
+import TrendingPage from './pages/TrendingPage';
 
 handleGoogleRedirect();
 
@@ -38,6 +41,7 @@ function AnimatedRoutes() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/library" element={<LibraryPage />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
+        <Route path="/trending" element={<TrendingPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/liked" element={<LikedPage />} />
         <Route path="/playlists" element={<PlaylistsPage />} />
@@ -59,6 +63,18 @@ function AnimatedRoutes() {
 
 function AppRoutes() {
   const { user, isGuest, loading } = useAuth();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (user && !isGuest) {
+      const isNew = localStorage.getItem('neonbeat_is_new_user');
+      const onboarded = localStorage.getItem('neonbeat_onboarded');
+      if (isNew === 'true' && !onboarded) {
+        // Delay slightly so app renders first
+        setTimeout(() => setShowOnboarding(true), 800);
+      }
+    }
+  }, [user, isGuest]);
 
   if (loading) {
     return (
@@ -90,6 +106,9 @@ function AppRoutes() {
       <AnimatedRoutes />
       <MusicPlayer />
       <BottomNav />
+      {showOnboarding && (
+        <OnboardingModal onDone={() => setShowOnboarding(false)} />
+      )}
     </div>
   );
 }
