@@ -93,9 +93,13 @@ export default function SearchPage() {
     { key: 'profil', label: 'Profil' },
   ];
 
-  const filteredSongs = activeTab === 'semua' || activeTab === 'lagu' ? songs : [];
-  const filteredArtists = activeTab === 'semua' || activeTab === 'artis' ? artists : [];
-  const filteredProfiles = activeTab === 'semua' || activeTab === 'profil' ? profiles.filter(p => !p.is_artist) : (activeTab === 'profil' ? profiles : []);
+  const filteredSongs: Song[] = (activeTab === 'semua' || activeTab === 'lagu') ? songs : [];
+  const filteredArtists: any[] = (activeTab === 'semua' || activeTab === 'artis') ? artists : [];
+  const filteredProfiles: any[] = activeTab === 'semua'
+    ? profiles.filter((p: any) => !p.is_artist)
+    : activeTab === 'profil'
+      ? profiles
+      : [];
 
   return (
     <div className="min-h-screen bg-[#0a0010] pt-20 pb-32">
