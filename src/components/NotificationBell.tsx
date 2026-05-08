@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Check, Trash2, Heart, UserPlus, Music } from 'lucide-react';
+import { Bell, Check, Trash2, Heart, UserPlus, Music, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import supabase from '../lib/supabase';
 
 export default function NotificationBell() {
   const { user } = useAuth();
@@ -18,7 +19,28 @@ export default function NotificationBell() {
     setUnread(data.unread || 0);
   };
 
-  useEffect(() => { fetch_(); const t = setInterval(fetch_, 30000); return () => clearInterval(t); }, [user]);
+  useEffect(() => {
+    if (!user) return;
+    fetch_();
+
+    // Supabase Realtime: dengarkan INSERT baru di tabel notifications untuk user ini
+    const channel = supabase
+      .channel(`notifications:${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+        () => { fetch_(); }
+      )
+      .subscribe();
+
+    // Polling fallback setiap 30 detik
+    const t = setInterval(fetch_, 30000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(t);
+    };
+  }, [user]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
@@ -36,7 +58,7 @@ export default function NotificationBell() {
     setNotifications([]); setUnread(0);
   };
 
-  const icons: Record<string, any> = { follow: UserPlus, like: Heart, upload: Music, default: Bell };
+  const icons: Record<string, any> = { follow: UserPlus, like: Heart, upload: Music, collaboration: Users, default: Bell };
 
   if (!user) return null;
 
@@ -55,8 +77,12 @@ export default function NotificationBell() {
 
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.95 }}
-            className="absolute right-0 top-10 w-80 bg-[#12001f] border border-purple-500/30 rounded-2xl shadow-[0_0_40px_rgba(147,51,234,0.3)] overflow-hidden z-50">
+          <motion.div
+            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.95 }}
+            className="fixed right-4 top-16 w-80 max-w-[calc(100vw-2rem)] bg-[#12001f] border border-purple-500/30 rounded-2xl shadow-[0_0_40px_rgba(147,51,234,0.3)] overflow-hidden z-[100]"
+          >
             <div className="p-3 border-b border-purple-500/20 flex items-center justify-between">
               <h3 className="text-white font-bold text-sm">Notifikasi</h3>
               <div className="flex gap-2">
@@ -78,7 +104,7 @@ export default function NotificationBell() {
                 const Icon = icons[n.type] || icons.default;
                 return (
                   <div key={n.id} className={`flex gap-3 p-3 border-b border-purple-500/10 transition-colors ${ !n.is_read ? 'bg-purple-500/5' : '' }`}>
-                    <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center" style={{ background: n.type === 'follow' ? '#9333ea20' : n.type === 'like' ? '#ec489920' : '#a855f720' }}>
+                    <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center" style={{ background: n.type === 'follow' ? '#9333ea20' : n.type === 'like' ? '#ec489920' : n.type === 'collaboration' ? '#a855f720' : '#a855f720' }}>
                       <Icon size={14} style={{ color: n.type === 'follow' ? '#9333ea' : n.type === 'like' ? '#ec4899' : '#a855f7' }} />
                     </div>
                     <div className="flex-1 min-w-0">
