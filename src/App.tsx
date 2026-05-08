@@ -62,7 +62,7 @@ function AnimatedRoutes() {
 }
 
 function AppRoutes() {
-  const { user, isGuest, loading } = useAuth();
+  const { user, isGuest, loading, profile } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
@@ -70,7 +70,6 @@ function AppRoutes() {
       const isNew = localStorage.getItem('neonbeat_is_new_user');
       const onboarded = localStorage.getItem('neonbeat_onboarded');
       if (isNew === 'true' && !onboarded) {
-        // Delay slightly so app renders first
         setTimeout(() => setShowOnboarding(true), 800);
       }
     }
@@ -107,7 +106,11 @@ function AppRoutes() {
       <MusicPlayer />
       <BottomNav />
       {showOnboarding && (
-        <OnboardingModal onDone={() => setShowOnboarding(false)} />
+        <OnboardingModal
+          onDone={() => setShowOnboarding(false)}
+          userId={user?.id}
+          initialUsername={profile?.username}
+        />
       )}
     </div>
   );
