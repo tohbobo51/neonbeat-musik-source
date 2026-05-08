@@ -341,8 +341,8 @@ export default function HomePage() {
               >
                 <SongCard
                   song={song}
-                  songs={songs}
-                  liked={likes.includes(song.id)}
+                  queue={songs}
+                  isLiked={likes.includes(song.id)}
                   onLike={handleLike}
                   onAddToPlaylist={user && !isGuest ? () => setAddToPlaylistSong(song) : undefined}
                 />
