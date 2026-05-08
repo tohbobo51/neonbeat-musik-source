@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, X, Plus, Check, Timer } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, X, Plus, Check, Timer, Radio } from 'lucide-react';
 import { usePlayer, AnimationStyle } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -88,7 +88,7 @@ const TIMER_OPTIONS = [
 ];
 
 export default function MusicPlayer() {
-  const { currentSong, isPlaying, currentTime, duration, volume, animStyle, setAnimStyle, togglePlay, nextSong, prevSong, seek, setVolume } = usePlayer();
+  const { currentSong, isPlaying, currentTime, duration, volume, animStyle, radioMode, setAnimStyle, setRadioMode, togglePlay, nextSong, prevSong, seek, setVolume } = usePlayer();
   const { user, isGuest } = useAuth();
   const [expanded, setExpanded] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -492,6 +492,19 @@ export default function MusicPlayer() {
                 <input type="range" min={0} max={1} step={0.01} value={volume}
                   onChange={e => setVolume(Number(e.target.value))}
                   className="flex-1 accent-purple-500 cursor-pointer" />
+              </div>
+
+              {/* Radio Mode Toggle */}
+              <div className="mt-4 flex justify-center">
+                <button onClick={() => setRadioMode(!radioMode)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-semibold transition-all ${
+                    radioMode
+                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/50 shadow-[0_0_12px_rgba(147,51,234,0.3)]'
+                      : 'border-purple-500/20 text-purple-300/40 hover:border-purple-500/40 hover:text-purple-300/70'
+                  }`}>
+                  <Radio size={15} />
+                  Radio Mode {radioMode ? 'ON' : 'OFF'}
+                </button>
               </div>
             </div>
           </motion.div>
