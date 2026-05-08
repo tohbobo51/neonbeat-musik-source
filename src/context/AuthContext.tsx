@@ -11,6 +11,7 @@ export interface Profile {
   bio: string;
   avatar_url: string;
   is_artist: boolean;
+  is_verified?: boolean;
   role: UserRole;
   follower_count?: number;
   following_count?: number;
@@ -78,7 +79,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }),
         });
         const newProfile = await createRes.json();
-        if (newProfile && newProfile.user_id) setProfile(newProfile);
+        if (newProfile && newProfile.user_id) {
+          setProfile(newProfile);
+          // Mark as new user for onboarding
+          if (!localStorage.getItem('neonbeat_onboarded')) {
+            localStorage.setItem('neonbeat_is_new_user', 'true');
+          }
+        }
       }
     } catch (e) {
       console.error('Profile fetch/create error:', e);
