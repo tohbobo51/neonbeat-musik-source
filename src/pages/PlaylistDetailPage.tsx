@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ListMusic, Play, Disc3, ArrowLeft, Trash2 } from 'lucide-react';
+import { ListMusic, Play, Disc3, ArrowLeft, Trash2, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import { useNavigate, useParams } from 'react-router-dom';
+import CollaboratorsModal from '../components/CollaboratorsModal';
 
 export default function PlaylistDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +16,7 @@ export default function PlaylistDetailPage() {
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState<string | null>(null);
   const [deletingPlaylist, setDeletingPlaylist] = useState(false);
+  const [showCollaborators, setShowCollaborators] = useState(false);
 
   const fetchDetail = async () => {
     if (!id) return;
@@ -29,8 +31,14 @@ export default function PlaylistDetailPage() {
 
   useEffect(() => { fetchDetail(); }, [id]);
 
+  const isOwner = user?.id === playlist?.user_id;
+
+  // Editor collaborators can also remove songs
+  const myCollab = playlist?.collaborators?.find((c: any) => c.user_id === user?.id && c.status === 'accepted');
+  const canEdit = isOwner || myCollab?.role === 'editor';
+
   const removeSong = async (songId: string) => {
-    if (!id) return;
+    if (!id || !canEdit) return;
     setRemoving(songId);
     try {
       await fetch('/api/playlists', {
@@ -44,7 +52,7 @@ export default function PlaylistDetailPage() {
   };
 
   const handleDeletePlaylist = async () => {
-    if (!id) return;
+    if (!id || !isOwner) return;
     setDeletingPlaylist(true);
     try {
       await fetch('/api/playlists', {
@@ -58,6 +66,7 @@ export default function PlaylistDetailPage() {
   };
 
   const songs = playlist?.playlist_songs?.map((ps: any) => ps.songs).filter(Boolean) || [];
+  const collaboratorCount = (playlist?.collaborators || []).filter((c: any) => c.status === 'accepted').length;
 
   return (
     <div className="min-h-screen bg-[#0a0010] pt-20 pb-32">
@@ -96,35 +105,64 @@ export default function PlaylistDetailPage() {
                     : <ListMusic size={28} className="text-purple-400" />}
                 </div>
 
-                {/* Name + count */}
+                {/* Name + meta */}
                 <div className="flex-1 min-w-0">
                   <h1 className="text-xl sm:text-2xl font-black text-white truncate">{playlist.name}</h1>
                   <p className="text-purple-300/50 text-sm mt-1">{songs.length} lagu</p>
+                  {collaboratorCount > 0 && (
+                    <p className="text-purple-400/60 text-xs mt-0.5 flex items-center gap-1">
+                      <Users size={11} /> {collaboratorCount} kolaborator
+                    </p>
+                  )}
+                  {myCollab && (
+                    <span className="inline-block mt-1 px-2 py-0.5 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-400 text-xs">
+                      {myCollab.role === 'editor' ? 'Editor' : 'Viewer'}
+                    </span>
+                  )}
                 </div>
               </div>
 
-              {/* Action buttons inside the card */}
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-purple-500/10">
+              {/* Action buttons */}
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-purple-500/10 flex-wrap">
                 {songs.length > 0 && (
                   <motion.button
                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                     onClick={() => playSong(songs[0], songs)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all text-sm"
+                    className="flex-1 min-w-[120px] flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all text-sm"
                   >
                     <Play size={16} /> Putar Semua
                   </motion.button>
                 )}
+
+                {/* Collaborators button */}
                 <motion.button
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                  onClick={handleDeletePlaylist}
-                  disabled={deletingPlaylist}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 hover:border-red-500/60 rounded-xl text-red-400 font-semibold transition-all text-sm disabled:opacity-50"
+                  onClick={() => setShowCollaborators(true)}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-500/10 border border-purple-500/30 hover:bg-purple-500/20 hover:border-purple-500/60 rounded-xl text-purple-300 font-semibold transition-all text-sm"
                 >
-                  {deletingPlaylist
-                    ? <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
-                    : <Trash2 size={15} />}
-                  Hapus Playlist
+                  <Users size={15} />
+                  {isOwner ? 'Kelola Kolaborator' : 'Lihat Kolaborator'}
+                  {collaboratorCount > 0 && (
+                    <span className="bg-purple-500/30 text-purple-200 text-xs px-1.5 py-0.5 rounded-full">
+                      {collaboratorCount}
+                    </span>
+                  )}
                 </motion.button>
+
+                {/* Delete (owner only) */}
+                {isOwner && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                    onClick={handleDeletePlaylist}
+                    disabled={deletingPlaylist}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 hover:border-red-500/60 rounded-xl text-red-400 font-semibold transition-all text-sm disabled:opacity-50"
+                  >
+                    {deletingPlaylist
+                      ? <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                      : <Trash2 size={15} />}
+                    Hapus
+                  </motion.button>
+                )}
               </div>
             </div>
 
@@ -146,10 +184,8 @@ export default function PlaylistDetailPage() {
                     className="flex items-center gap-3 p-3 bg-[#12001f]/60 border border-purple-500/10 rounded-xl hover:border-purple-500/30 hover:bg-[#12001f]/80 transition-all cursor-pointer"
                     onClick={() => playSong(song, songs)}
                   >
-                    {/* Number */}
                     <span className="text-purple-300/30 text-sm w-5 text-right flex-shrink-0">{i + 1}</span>
 
-                    {/* Cover */}
                     <div className="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0">
                       {song.cover_url
                         ? <img src={song.cover_url} alt="" className="w-full h-full object-cover" />
@@ -158,13 +194,11 @@ export default function PlaylistDetailPage() {
                           </div>}
                     </div>
 
-                    {/* Title + artist */}
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-semibold truncate text-sm">{song.title}</p>
                       <p className="text-purple-300/50 text-xs truncate">{song.artist_name}</p>
                     </div>
 
-                    {/* Genre badge — hidden on very small screens */}
                     {song.genres && (
                       <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0"
                         style={{ background: `${song.genres.color}25`, color: song.genres.color, border: `1px solid ${song.genres.color}40` }}>
@@ -172,18 +206,19 @@ export default function PlaylistDetailPage() {
                       </span>
                     )}
 
-                    {/* Remove from playlist — always visible */}
-                    <motion.button
-                      whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                      onClick={e => { e.stopPropagation(); removeSong(song.id); }}
-                      disabled={removing === song.id}
-                      className="p-2 rounded-lg text-red-400/50 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40 flex-shrink-0"
-                      title="Hapus dari playlist"
-                    >
-                      {removing === song.id
-                        ? <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
-                        : <Trash2 size={15} />}
-                    </motion.button>
+                    {canEdit && (
+                      <motion.button
+                        whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                        onClick={e => { e.stopPropagation(); removeSong(song.id); }}
+                        disabled={removing === song.id}
+                        className="p-2 rounded-lg text-red-400/50 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40 flex-shrink-0"
+                        title="Hapus dari playlist"
+                      >
+                        {removing === song.id
+                          ? <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                          : <Trash2 size={15} />}
+                      </motion.button>
+                    )}
                   </motion.div>
                 ))}
               </div>
@@ -191,6 +226,15 @@ export default function PlaylistDetailPage() {
           </>
         )}
       </div>
+
+      {showCollaborators && playlist && (
+        <CollaboratorsModal
+          playlistId={playlist.id}
+          playlistName={playlist.name}
+          ownerId={playlist.user_id}
+          onClose={() => { setShowCollaborators(false); fetchDetail(); }}
+        />
+      )}
     </div>
   );
 }

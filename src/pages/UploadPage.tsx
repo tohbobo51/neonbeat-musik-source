@@ -10,7 +10,6 @@ export default function UploadPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<'manual' | 'youtube'>('manual');
   const [title, setTitle] = useState('');
-  const [authorName, setAuthorName] = useState(profile?.username || '');
   const [genreId, setGenreId] = useState('');
   const [genres, setGenres] = useState<any[]>([]);
 
@@ -36,8 +35,7 @@ export default function UploadPage() {
     fetch('/api/genres').then(r => r.json()).then(data => {
       if (Array.isArray(data)) setGenres(data);
     });
-    if (profile?.username) setAuthorName(profile.username);
-  }, [profile]);
+  }, []);
 
   if (!isArtist) {
     return (
@@ -78,25 +76,6 @@ export default function UploadPage() {
     return downloadUrl;
   };
 
-  const extractChannelName = (result: any): string => {
-    // First try the normalized field added by our API proxy
-    if (result._artist && typeof result._artist === 'string' && result._artist.trim()) {
-      return result._artist.trim();
-    }
-    const fields = [
-      'channel_name', 'channel', 'author', 'uploader', 'creator',
-      'artist', 'owner', 'artist_name', 'uploader_name', 'channelTitle',
-      'channel_title', 'publisher', 'performer', 'uploader_id',
-    ];
-    for (const f of fields) {
-      const val = result[f];
-      if (val && typeof val === 'string' && val.trim() && !val.startsWith('http')) {
-        return val.trim();
-      }
-    }
-    return '';
-  };
-
   const handleFetchYoutube = async () => {
     if (!youtubeUrl.trim()) return;
     setYoutubeStep(1);
@@ -117,8 +96,8 @@ export default function UploadPage() {
       const result = data.result;
       setTitle(result.title || '');
 
-      const channelName = extractChannelName(result);
-      setAuthorName(channelName || profile?.username || authorName);
+      // Artist name is ALWAYS the user's own username — YouTube channel name is ignored
+      // because the uploader is the artist on NeonBeat
 
       setYoutubeCoverUrl(result.thumbnail || '');
       setCoverPreview(result.thumbnail || null);
@@ -190,12 +169,13 @@ export default function UploadPage() {
 
       setProgress(90);
 
+      // artist_name always uses the user's own username regardless of import source
       await fetch('/api/songs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title,
-          artist_name: authorName || profile?.username,
+          artist_name: profile?.username,
           audio_url: finalAudioUrl,
           cover_url: finalCoverUrl,
           genre_id: genreId || null,
@@ -271,6 +251,7 @@ export default function UploadPage() {
                   <h2 className="text-white font-bold flex items-center gap-2">
                     <Youtube size={18} className="text-red-400" /> Link YouTube
                   </h2>
+                  <p className="text-purple-300/50 text-xs">Audio dan thumbnail akan diambil dari YouTube. Nama artis tetap menggunakan username kamu.</p>
                   <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       value={youtubeUrl}
@@ -292,7 +273,7 @@ export default function UploadPage() {
                   {youtubeStep > 0 && (
                     <div className="space-y-2 pt-1">
                       {([
-                        { step: 1, label: 'Mengambil info video (judul, nama channel, thumbnail)...' },
+                        { step: 1, label: 'Mengambil info video (judul & thumbnail)...' },
                         { step: 2, label: 'Mendownload audio MP3 (10–30 detik)...' },
                         { step: 3, label: 'Menyimpan ke Supabase storage...' },
                       ] as const).map(({ step, label }) => {

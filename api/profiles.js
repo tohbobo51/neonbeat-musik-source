@@ -21,8 +21,65 @@ async function makeUniqueUsername(base, excludeUserId = null) {
   return `${clean}_${Math.floor(Math.random() * 9000 + 1000)}`;
 }
 
+// Minimal guaranteed columns — always works even on a bare-bones schema
+const MIN_SELECT = 'user_id, username, avatar_url, is_artist';
 const SAFE_SELECT = 'user_id, username, avatar_url, is_artist, role, follower_count, following_count, bio, is_verified';
 const FULL_SELECT = `${SAFE_SELECT}, full_name`;
+
+// Try running a query, return data or null on any error
+async function tryQuery(queryFn) {
+  try {
+    const { data, error } = await queryFn();
+    if (!error && data) return data;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function searchProfiles(term, isArtistFilter) {
+  const escaped = term.replace(/[%_\\]/g, '\\$&');
+
+  // Attempt 1: full columns + OR username/full_name
+  const a1 = await tryQuery(() => {
+    let q = supabase.from('profiles')
+      .select(FULL_SELECT)
+      .or(`username.ilike.%${escaped}%,full_name.ilike.%${escaped}%`);
+    if (isArtistFilter) q = q.eq('is_artist', true);
+    return q.limit(30);
+  });
+  if (a1 !== null) return a1;
+
+  // Attempt 2: safe columns + OR username/full_name
+  const a2 = await tryQuery(() => {
+    let q = supabase.from('profiles')
+      .select(SAFE_SELECT)
+      .or(`username.ilike.%${escaped}%,full_name.ilike.%${escaped}%`);
+    if (isArtistFilter) q = q.eq('is_artist', true);
+    return q.limit(30);
+  });
+  if (a2 !== null) return a2;
+
+  // Attempt 3: safe columns + username only
+  const a3 = await tryQuery(() => {
+    let q = supabase.from('profiles')
+      .select(SAFE_SELECT)
+      .ilike('username', `%${escaped}%`);
+    if (isArtistFilter) q = q.eq('is_artist', true);
+    return q.limit(30);
+  });
+  if (a3 !== null) return a3;
+
+  // Attempt 4: minimal columns + username only (last resort)
+  const a4 = await tryQuery(() => {
+    let q = supabase.from('profiles')
+      .select(MIN_SELECT)
+      .ilike('username', `%${escaped}%`);
+    if (isArtistFilter) q = q.eq('is_artist', true);
+    return q.limit(30);
+  });
+  return a4 || [];
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,52 +96,39 @@ export default async function handler(req, res) {
         return res.status(200).json({ available: !taken, suggestion: clean });
       }
 
-      // Search profiles — safe fallback if full_name column doesn't exist
       if (search) {
-        const term = search.replace(/[%_]/g, '\\$&'); // escape special chars
-
-        // Try searching username OR full_name
-        let found = null;
-        try {
-          let q = supabase.from('profiles').select(FULL_SELECT)
-            .or(`username.ilike.%${term}%,full_name.ilike.%${term}%`);
-          if (is_artist === 'true') q = q.eq('is_artist', true);
-          const { data, error } = await q.limit(30);
-          if (!error) found = data;
-        } catch {}
-
-        // Fallback: username only (no full_name column)
-        if (found === null) {
-          try {
-            let q = supabase.from('profiles').select(SAFE_SELECT)
-              .ilike('username', `%${term}%`);
-            if (is_artist === 'true') q = q.eq('is_artist', true);
-            const { data } = await q.limit(30);
-            found = data;
-          } catch {}
-        }
-
-        return res.status(200).json(found || []);
+        const results = await searchProfiles(search, is_artist === 'true');
+        return res.status(200).json(results);
       }
 
-      // Get single profile — try with full_name, fallback without
+      // Get single profile — try with all columns, fallback to fewer
       if (user_id || username) {
-        let result = null;
-        try {
+        // Attempt full select
+        let result = await tryQuery(() => {
           let q = supabase.from('profiles').select('*');
           if (user_id) q = q.eq('user_id', user_id);
           if (username) q = q.eq('username', username);
-          const { data, error } = await q.single();
-          if (!error) result = data;
-        } catch {}
+          return q.single();
+        });
 
+        // Fallback safe select
         if (result === null) {
-          let q = supabase.from('profiles').select(SAFE_SELECT);
-          if (user_id) q = q.eq('user_id', user_id);
-          if (username) q = q.eq('username', username);
-          const { data } = await q.single();
+          result = await tryQuery(() => {
+            let q = supabase.from('profiles').select(SAFE_SELECT);
+            if (user_id) q = q.eq('user_id', user_id);
+            if (username) q = q.eq('username', username);
+            return q.single();
+          });
+        }
+
+        // Fallback minimal select
+        if (result === null) {
+          const { data } = await (user_id
+            ? supabase.from('profiles').select(MIN_SELECT).eq('user_id', user_id).single()
+            : supabase.from('profiles').select(MIN_SELECT).eq('username', username).single());
           result = data;
         }
+
         return res.status(200).json(result || null);
       }
 
@@ -111,14 +155,12 @@ export default async function handler(req, res) {
 
     if (req.method === 'PUT') {
       const { user_id, username, full_name, is_verified, ...rest } = req.body;
-      // username PERMANENT — tidak bisa diubah via PUT
       let updates = { ...rest };
       if (full_name !== undefined) updates.full_name = full_name;
       if (is_verified !== undefined) updates.is_verified = is_verified;
 
       let result = await supabase.from('profiles').update(updates).eq('user_id', user_id).select().single();
       if (result.error?.code === '42703') {
-        // Remove unknown columns and retry
         const safeUpdates = {};
         const knownCols = ['bio', 'avatar_url', 'is_artist', 'role', 'follower_count', 'following_count'];
         knownCols.forEach(k => { if (updates[k] !== undefined) safeUpdates[k] = updates[k]; });
