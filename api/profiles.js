@@ -88,7 +88,18 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   try {
     if (req.method === 'GET') {
-      const { user_id, username, check_username, search, is_artist } = req.query;
+      const { user_id, username, check_username, search, is_artist, get_email } = req.query;
+
+      // Ambil email dari auth.users pakai service role — dipakai oleh login flow
+      if (get_email && user_id) {
+        try {
+          const { data, error } = await supabase.auth.admin.getUserById(user_id);
+          if (error || !data?.user) return res.status(200).json({ email: null });
+          return res.status(200).json({ email: data.user.email });
+        } catch {
+          return res.status(200).json({ email: null });
+        }
+      }
 
       if (check_username) {
         const clean = sanitizeUsername(check_username);
