@@ -75,46 +75,27 @@ async function handleFollows(req, res) {
     if (existing) {
       // UNFOLLOW
       await supabase.from('follows').delete().eq('follower_id', follower_id).eq('artist_id', artist_id);
-
-      // Decrease follower_count for artist
-      const { data: artistProfile } = await supabase.from('profiles').select('follower_count').eq('user_id', artist_id).single();
-      if (artistProfile) {
-        await supabase.from('profiles').update({
-          follower_count: Math.max(0, (artistProfile.follower_count || 1) - 1)
-        }).eq('user_id', artist_id);
-      }
-
-      // Decrease following_count for follower
-      const { data: followerProfile } = await supabase.from('profiles').select('following_count').eq('user_id', follower_id).single();
-      if (followerProfile) {
-        await supabase.from('profiles').update({
-          following_count: Math.max(0, (followerProfile.following_count || 1) - 1)
-        }).eq('user_id', follower_id);
-      }
-
-      return res.status(200).json({ following: false });
+    } else {
+      // FOLLOW
+      await supabase.from('follows').insert({ follower_id, artist_id });
     }
 
-    // FOLLOW
-    await supabase.from('follows').insert({ follower_id, artist_id });
+    // Always recalculate accurate counts from actual follows table
+    const { count: actualFollowerCount } = await supabase
+      .from('follows').select('*', { count: 'exact', head: true }).eq('artist_id', artist_id);
+    const { count: actualFollowingCount } = await supabase
+      .from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', follower_id);
 
-    // Increase follower_count for artist
-    const { data: artistProfile2 } = await supabase.from('profiles').select('follower_count').eq('user_id', artist_id).single();
-    if (artistProfile2) {
-      await supabase.from('profiles').update({
-        follower_count: (artistProfile2.follower_count || 0) + 1
-      }).eq('user_id', artist_id);
+    await Promise.all([
+      supabase.from('profiles').update({ follower_count: actualFollowerCount || 0 }).eq('user_id', artist_id),
+      supabase.from('profiles').update({ following_count: actualFollowingCount || 0 }).eq('user_id', follower_id),
+    ]);
+
+    if (existing) {
+      return res.status(200).json({ following: false, follower_count: actualFollowerCount || 0 });
     }
 
-    // Increase following_count for follower
-    const { data: followerProfile2 } = await supabase.from('profiles').select('following_count').eq('user_id', follower_id).single();
-    if (followerProfile2) {
-      await supabase.from('profiles').update({
-        following_count: (followerProfile2.following_count || 0) + 1
-      }).eq('user_id', follower_id);
-    }
-
-    // Send notification
+    // Send notification for new follow
     const { data: fp } = await supabase.from('profiles').select('username').eq('user_id', follower_id).single();
     try {
       await supabase.from('notifications').insert({
@@ -126,7 +107,7 @@ async function handleFollows(req, res) {
       });
     } catch (e) {}
 
-    return res.status(201).json({ following: true });
+    return res.status(201).json({ following: true, follower_count: actualFollowerCount || 0 });
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
