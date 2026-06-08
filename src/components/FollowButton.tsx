@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { UserPlus, UserCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export default function FollowButton({ artistId, size = 'md' }: { artistId: string; size?: 'sm' | 'md' }) {
+export default function FollowButton({ artistId, size = 'md', onFollowChange }: { artistId: string; size?: 'sm' | 'md'; onFollowChange?: (newCount: number) => void }) {
   const { user } = useAuth();
   const [following, setFollowing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,6 +21,7 @@ export default function FollowButton({ artistId, size = 'md' }: { artistId: stri
     const res = await fetch('/api/extras?route=follows', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ follower_id: user.id, artist_id: artistId }) });
     const data = await res.json();
     setFollowing(data.following);
+    if (onFollowChange) onFollowChange(data.follower_count ?? -1);
     setLoading(false);
   };
 
