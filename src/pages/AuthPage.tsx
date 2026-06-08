@@ -25,7 +25,7 @@ export default function AuthPage() {
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
 
-  // Form masuk — pakai username
+  // Form masuk — pakai username atau email
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
@@ -91,33 +91,44 @@ export default function AuthPage() {
     e.preventDefault();
     setError(''); setLoading(true);
     try {
-      // Cari email berdasarkan username
-      const clean = sanitizeUsername(loginUsername);
-      if (!clean) { setError('Masukkan username'); return; }
+      const isEmail = loginUsername.includes('@');
 
-      const res = await fetch(`/api/profiles?username=${encodeURIComponent(clean)}`);
-      const profile = await res.json();
+      if (isEmail) {
+        // Login langsung pakai email (untuk admin atau akun dibuat via Supabase)
+        const { error: loginErr } = await supabase.auth.signInWithPassword({
+          email: loginUsername.trim(),
+          password: loginPassword,
+        });
+        if (loginErr) throw loginErr;
+      } else {
+        // Cari email berdasarkan username
+        const clean = sanitizeUsername(loginUsername);
+        if (!clean) { setError('Masukkan username atau email'); return; }
 
-      if (!profile || !profile.user_id) {
-        setError('Username tidak ditemukan'); return;
+        const res = await fetch(`/api/profiles?username=${encodeURIComponent(clean)}`);
+        const profile = await res.json();
+
+        if (!profile || !profile.user_id) {
+          setError('Username tidak ditemukan'); return;
+        }
+
+        // Ambil email dari Supabase auth via API
+        const emailRes = await fetch(`/api/profiles?get_email=1&user_id=${profile.user_id}`);
+        const emailData = await emailRes.json();
+
+        if (!emailData?.email) {
+          setError('Akun tidak ditemukan'); return;
+        }
+
+        const { error: loginErr } = await supabase.auth.signInWithPassword({
+          email: emailData.email,
+          password: loginPassword,
+        });
+        if (loginErr) throw loginErr;
       }
-
-      // Ambil email dari Supabase auth via API
-      const emailRes = await fetch(`/api/profiles?get_email=1&user_id=${profile.user_id}`);
-      const emailData = await emailRes.json();
-
-      if (!emailData?.email) {
-        setError('Akun tidak ditemukan'); return;
-      }
-
-      const { error: loginErr } = await supabase.auth.signInWithPassword({
-        email: emailData.email,
-        password: loginPassword,
-      });
-      if (loginErr) throw loginErr;
     } catch (err: any) {
       if (err.message?.includes('Invalid login')) {
-        setError('Username atau password salah');
+        setError('Username/email atau password salah');
       } else {
         setError(err.message || 'Terjadi kesalahan');
       }
