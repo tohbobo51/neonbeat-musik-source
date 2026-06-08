@@ -49,7 +49,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   try {
     if (req.method === 'GET') {
-      const { user_id, id, public_only, shared_with, collaborators } = req.query;
+      const { user_id, id, public_only, shared_with, collaborators, pending_invites } = req.query;
 
       // Get collaborator list for a playlist
       if (collaborators) {
