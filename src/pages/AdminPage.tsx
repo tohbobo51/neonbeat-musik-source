@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, Music, Tag, Users, BarChart3, Plus, Edit2, Trash2, X, Check, Upload, Image, Loader, Eye, EyeOff, Disc3, TrendingUp, BadgeCheck, UserCog } from 'lucide-react';
+import { Crown, Music, Tag, Users, BarChart3, Plus, Edit2, Trash2, X, Check, Upload, Image, Loader, Eye, EyeOff, Disc3, TrendingUp, BadgeCheck, UserCog, Key, Copy } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import ImageCropper from '../components/ImageCropper';
@@ -206,7 +206,21 @@ export default function AdminPage() {
     fetchAll();
   };
 
-  const setUserRole = async (userId: string, role: string) => {
+  const handleSetPassword = async () => {
+      if (!setPasswordUserId || !setPasswordValue.trim() || setPasswordValue.length < 6) return;
+      setSettingPassword(true);
+      try {
+        const res = await fetch('/api/admin', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'set_password', id: setPasswordUserId, password: setPasswordValue }),
+        });
+        if (res.ok) { setSetPasswordDone(true); setTimeout(() => { setSetPasswordModal(false); setSetPasswordDone(false); setSetPasswordValue(''); }, 1500); }
+      } catch {}
+      setSettingPassword(false);
+    };
+
+      const setUserRole = async (userId: string, role: string) => {
     await fetch('/api/admin', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'set_role', id: userId, role, is_artist: role === 'artist' || role === 'admin' }) });
     fetchAll();
   };
@@ -400,14 +414,11 @@ export default function AdminPage() {
                         <p className="text-white font-semibold truncate">{user.full_name || user.username}</p>
                         {user.is_verified && <BadgeCheck size={14} className="text-blue-400 flex-shrink-0" />}
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-purple-300/50">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-purple-300/50">
                         <span>@{user.username}</span>
-                        <span className="flex items-center gap-1">
-                          👥 {user.follower_count || 0} pengikut
-                        </span>
-                        <span>
-                          {user.following_count || 0} mengikuti
-                        </span>
+                        {user.email && <span className="font-mono text-purple-300/30">{user.email}</span>}
+                        <span className="flex items-center gap-1">👥 {user.follower_count || 0} pengikut</span>
+                        <span>{user.following_count || 0} mengikuti</span>
                       </div>
                     </div>
 
@@ -587,6 +598,47 @@ export default function AdminPage() {
       <AnimatePresence>
         {cropSrc && <ImageCropper imageSrc={cropSrc} onCrop={handleCrop} onCancel={() => setCropSrc(null)} />}
       </AnimatePresence>
-    </div>
+{/* Set Password Modal */}
+        <AnimatePresence>
+          {setPasswordModal && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+              onClick={() => setSetPasswordModal(false)}>
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-[#12001f] border border-purple-500/30 rounded-2xl p-6 w-full max-w-md shadow-[0_0_40px_rgba(147,51,234,0.3)]"
+                onClick={e => e.stopPropagation()}>
+                <div className="flex items-center gap-3 mb-5">
+                  <Key size={20} className="text-yellow-400" />
+                  <h3 className="text-white font-bold text-lg">Set Password User</h3>
+                  <button onClick={() => setSetPasswordModal(false)} className="ml-auto text-purple-300/40 hover:text-purple-300"><X size={18} /></button>
+                </div>
+                <p className="text-purple-300/50 text-sm mb-4">Set password baru untuk user ini. Minimal 6 karakter.</p>
+                <div className="relative mb-4">
+                  <input
+                    type="text"
+                    value={setPasswordValue}
+                    onChange={e => setSetPasswordValue(e.target.value)}
+                    placeholder="Password baru (min 6 karakter)"
+                    className="w-full bg-[#0a0010] border border-purple-500/30 text-white rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-purple-500 font-mono"
+                  />
+                  <button onClick={() => { navigator.clipboard.writeText(setPasswordValue).catch(()=>{}); }}
+                    title="Salin" className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-300/40 hover:text-purple-300">
+                    <Copy size={15} />
+                  </button>
+                </div>
+                <button
+                  onClick={handleSetPassword}
+                  disabled={settingPassword || setPasswordValue.length < 6}
+                  className="w-full py-3 rounded-xl font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-600 to-orange-600 text-white">
+                  {settingPassword ? <><Loader size={16} className="animate-spin" /> Menyimpan...</>
+                    : setPasswordDone ? <><Check size={16} /> Berhasil!</>
+                    : <><Key size={16} /> Set Password</>}
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+            </div>
   );
 }
