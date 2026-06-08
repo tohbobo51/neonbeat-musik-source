@@ -25,6 +25,7 @@ export default function CollaboratorsModal({ playlistId, playlistName, ownerId, 
 
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [loading, setLoading] = useState(true);
+  const [ownerProfile, setOwnerProfile] = useState<{ username: string; avatar_url?: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [searching, setSearching] = useState(false);
@@ -42,13 +43,13 @@ export default function CollaboratorsModal({ playlistId, playlistName, ownerId, 
 
   useEffect(() => { fetchCollaborators(); }, [playlistId]);
 
-    // Fetch owner profile
-    useEffect(() => {
-      fetch(`/api/profiles?user_id=${ownerId}`)
-        .then(r => r.json())
-        .then(d => { if (d?.user_id) setOwnerProfile(d); })
-        .catch(() => {});
-    }, [ownerId]);
+  // Fetch owner profile
+  useEffect(() => {
+    fetch(`/api/profiles?user_id=${ownerId}`)
+      .then(r => r.json())
+      .then(d => { if (d?.user_id) setOwnerProfile(d); })
+      .catch(() => {});
+  }, [ownerId]);
 
   useEffect(() => {
     if (!searchQuery.trim()) { setSearchResults([]); return; }
