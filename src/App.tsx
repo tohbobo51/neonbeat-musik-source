@@ -27,6 +27,7 @@ import MyMusicPage from './pages/MyMusicPage';
 import ArtistStatsPage from './pages/ArtistStatsPage';
 import RecommendationsPage from './pages/RecommendationsPage';
 import TrendingPage from './pages/TrendingPage';
+import SongPage from './pages/SongPage';
 
 handleGoogleRedirect();
 
@@ -53,6 +54,7 @@ function AnimatedRoutes() {
         <Route path="/upload" element={user ? <UploadPage /> : <Navigate to="/auth" replace />} />
         <Route path="/my-music" element={user ? <MyMusicPage /> : <Navigate to="/auth" replace />} />
         <Route path="/artist-stats" element={user ? <ArtistStatsPage /> : <Navigate to="/auth" replace />} />
+        <Route path="/song/:id" element={<SongPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/auth" element={user ? <Navigate to="/" replace /> : <AuthPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
