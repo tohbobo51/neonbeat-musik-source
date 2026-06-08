@@ -42,6 +42,14 @@ export default function CollaboratorsModal({ playlistId, playlistName, ownerId, 
 
   useEffect(() => { fetchCollaborators(); }, [playlistId]);
 
+    // Fetch owner profile
+    useEffect(() => {
+      fetch(`/api/profiles?user_id=${ownerId}`)
+        .then(r => r.json())
+        .then(d => { if (d?.user_id) setOwnerProfile(d); })
+        .catch(() => {});
+    }, [ownerId]);
+
   useEffect(() => {
     if (!searchQuery.trim()) { setSearchResults([]); return; }
     const t = setTimeout(async () => {
