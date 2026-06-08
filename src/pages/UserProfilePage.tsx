@@ -136,7 +136,7 @@ export default function UserProfilePage() {
 
         {/* Action buttons */}
         <div className="flex items-center gap-2 mb-8">
-          {user && <FollowButton artistId={id!} />}
+          {user && <FollowButton artistId={id!} onFollowChange={count => count >= 0 && setProfile((p: any) => p ? { ...p, follower_count: count } : p)} />}
 
           {/* Dot menu */}
           <div className="relative">
