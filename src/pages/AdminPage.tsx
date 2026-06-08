@@ -109,6 +109,11 @@ export default function AdminPage() {
     const [settingPassword, setSettingPassword] = useState(false);
     const [setPasswordDone, setSetPasswordDone] = useState(false);
 
+    // Password column migration
+    const [migrationSql, setMigrationSql] = useState('');
+    const [runningMigration, setRunningMigration] = useState(false);
+    const [migrationDone, setMigrationDone] = useState(false);
+
   useEffect(() => {
     if (!isAdmin) return;
     fetchAll();
@@ -232,7 +237,22 @@ export default function AdminPage() {
     fetchAll();
   };
 
-  const toggleVerify = async (userId: string, currentVerified: boolean) => {
+  const handleRunMigration = async () => {
+      setRunningMigration(true);
+      setMigrationSql('');
+      try {
+        const res = await fetch('/api/admin?action=run_migration', { method: 'POST' });
+        const data = await res.json();
+        if (data.manual && data.sql) {
+          setMigrationSql(data.sql);
+        } else if (data.ok) {
+          setMigrationDone(true);
+        }
+      } catch {}
+      setRunningMigration(false);
+    };
+
+    const toggleVerify = async (userId: string, currentVerified: boolean) => {
     await fetch('/api/admin', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -399,7 +419,17 @@ export default function AdminPage() {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-white">Kelola Pengguna</h2>
-              <span className="text-purple-300/50 text-sm">{users.length} pengguna</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-purple-300/50 text-sm">{users.length} pengguna</span>
+                  <button
+                    onClick={handleRunMigration}
+                    disabled={runningMigration || migrationDone}
+                    title="Tambah kolom password ke tabel profiles di Supabase"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all disabled:opacity-50 border-green-500/40 text-green-400 hover:bg-green-500/10"
+                  >
+                    {runningMigration ? '⏳ Setup...' : migrationDone ? '✅ Done' : '🔧 Setup Kolom Password'}
+                  </button>
+                </div>
             </div>
             {loading ? <div className="space-y-3">{[...Array(5)].map((_, i) => <div key={i} className="h-20 bg-[#12001f]/60 rounded-xl animate-pulse" />)}</div> : (
               <div className="space-y-2">
