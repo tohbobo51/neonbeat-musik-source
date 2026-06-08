@@ -209,7 +209,19 @@ export default async function handler(req, res) {
       const { id, action, collab_id, status, role, ...updates } = req.body;
 
       // Respond to collaboration invite (accept/reject)
-      if (action === 'respond_invite') {
+      if (action === 'update_cover') {
+          const { data, error } = await supabase
+            .from('playlists')
+            .update({ cover_url: req.body.cover_url })
+            .eq('id', id)
+            .eq('user_id', req.body.user_id)
+            .select()
+            .single();
+          if (error) throw error;
+          return res.status(200).json(data);
+        }
+
+        if (action === 'respond_invite') {
         const { data, error } = await supabase
           .from('playlist_collaborators')
           .update({ status })
