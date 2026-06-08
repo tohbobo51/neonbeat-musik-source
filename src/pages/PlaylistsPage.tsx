@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ListMusic, Plus, Trash2, ChevronRight, Music, Users } from 'lucide-react';
+import { ListMusic, Plus, Trash2, ChevronRight, Music, Users, Bell, Check, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -8,6 +8,8 @@ export default function PlaylistsPage() {
   const { user, isGuest } = useAuth();
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [sharedPlaylists, setSharedPlaylists] = useState<any[]>([]);
+  const [pendingInvites, setPendingInvites] = useState<any[]>([]);
+  const [respondingId, setRespondingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [newName, setNewName] = useState('');
   const [creating, setCreating] = useState(false);
@@ -59,7 +61,20 @@ export default function PlaylistsPage() {
     setDeletingId(null);
   };
 
-  if (isGuest || !user) {
+  const respondToInvite = async (collabId: string, accept: boolean) => {
+      setRespondingId(collabId);
+      try {
+        await fetch('/api/playlists', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'respond_invite', collab_id: collabId, status: accept ? 'accepted' : 'rejected' }),
+        });
+        fetchPlaylists();
+      } catch {}
+      setRespondingId(null);
+    };
+
+    if (isGuest || !user) {
     return (
       <div className="min-h-screen bg-[#0a0010] pt-20 flex items-center justify-center">
         <div className="text-center">
