@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, X, Plus, Check, Timer, Radio } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, ListMusic, X, Plus, Check, Timer, Radio } from 'lucide-react';
 import { usePlayer, AnimationStyle } from '../context/PlayerContext';
+import QueuePanel from './QueuePanel';
 import { useAuth } from '../context/AuthContext';
 
 function formatTime(s: number) {
@@ -88,9 +89,10 @@ const TIMER_OPTIONS = [
 ];
 
 export default function MusicPlayer() {
-  const { currentSong, isPlaying, currentTime, duration, volume, animStyle, radioMode, setAnimStyle, setRadioMode, togglePlay, nextSong, prevSong, seek, setVolume } = usePlayer();
+  const { currentSong, isPlaying, currentTime, duration, volume, animStyle, radioMode, queue, setAnimStyle, setRadioMode, togglePlay, nextSong, prevSong, seek, setVolume } = usePlayer();
   const { user, isGuest } = useAuth();
   const [expanded, setExpanded] = useState(false);
+  const [showQueue, setShowQueue] = useState(false);
   const [muted, setMuted] = useState(false);
   const [prevVol, setPrevVol] = useState(0.8);
 
@@ -482,6 +484,17 @@ export default function MusicPlayer() {
                   <SkipForward size={24} />
                 </button>
                 <PlaylistButton size={22} />
+                <motion.button
+                  whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
+                  onClick={() => setShowQueue(v => !v)}
+                  className={`transition-all relative ${showQueue ? 'text-purple-300' : 'text-purple-300/60 hover:text-purple-300'}`}
+                  title="Antrian"
+                >
+                  <ListMusic size={22} />
+                  {queue.length > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-purple-500 text-white text-[9px] font-bold flex items-center justify-center">{queue.length > 9 ? '9+' : queue.length}</span>
+                  )}
+                </motion.button>
               </div>
 
               {/* Volume */}
@@ -510,6 +523,8 @@ export default function MusicPlayer() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <QueuePanel open={showQueue} onClose={() => setShowQueue(false)} />
 
       {/* Mini Player */}
       <motion.div
@@ -553,6 +568,17 @@ export default function MusicPlayer() {
             </motion.button>
             <button onClick={nextSong} className="text-purple-300/60 hover:text-purple-300"><SkipForward size={18} /></button>
             <PlaylistButton size={17} />
+            <motion.button
+              whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
+              onClick={() => setShowQueue(v => !v)}
+              className={`transition-all relative ${showQueue ? 'text-purple-300' : 'text-purple-300/60 hover:text-purple-300'}`}
+              title="Antrian"
+            >
+              <ListMusic size={17} />
+              {queue.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-purple-500 text-white text-[8px] font-bold flex items-center justify-center">{queue.length > 9 ? '9+' : queue.length}</span>
+              )}
+            </motion.button>
           </div>
         </div>
       </motion.div>
