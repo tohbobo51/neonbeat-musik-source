@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ListMusic, Play, Disc3, ArrowLeft, Trash2, Users } from 'lucide-react';
+import { ListMusic, Play, Disc3, ArrowLeft, Trash2, Users, Camera, Loader } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,6 +16,7 @@ export default function PlaylistDetailPage() {
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState<string | null>(null);
   const [deletingPlaylist, setDeletingPlaylist] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
   const [showCollaborators, setShowCollaborators] = useState(false);
 
   const fetchDetail = async () => {
@@ -65,7 +66,27 @@ export default function PlaylistDetailPage() {
     setDeletingPlaylist(false);
   };
 
-  const songs = playlist?.playlist_songs?.map((ps: any) => ps.songs).filter(Boolean) || [];
+  const uploadCover = async (file: File) => {
+      if (!id || !isOwner || !file) return;
+      setCoverUploading(true);
+      try {
+        const { signedUrl, downloadUrl } = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, contentType: file.type, bucket: 'covers' }),
+        }).then(r => r.json());
+        await fetch(signedUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+        await fetch('/api/playlists', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'update_cover', id, user_id: user?.id, cover_url: downloadUrl }),
+        });
+        fetchDetail();
+      } catch (e) { console.error(e); }
+      setCoverUploading(false);
+    };
+
+    const songs = playlist?.playlist_songs?.map((ps: any) => ps.songs).filter(Boolean) || [];
   const collaboratorCount = (playlist?.collaborators || []).filter((c: any) => c.status === 'accepted').length;
 
   return (
