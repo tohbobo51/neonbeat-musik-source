@@ -13,7 +13,7 @@ interface Props {
 }
 
 function shareSong(song: Song) {
-  const url = `${window.location.origin}/?song=${song.id}`;
+  const url = `${window.location.origin}/song/${song.id}`;
   const text = `🎵 Dengerin "${song.title}" oleh ${song.artist_name} di NeonBeat!\n${url}`;
   return { url, text };
 }
