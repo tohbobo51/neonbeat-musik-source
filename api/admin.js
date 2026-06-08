@@ -150,6 +150,39 @@ export default async function handler(req, res) {
         return res.status(200).json({ ok: true });
       }
 
+
+        if (action === 'run_migration') {
+          // Run DDL migration via Supabase SQL API (service role)
+          const supabaseUrl = process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const serviceKey = process.env.SUPABASE_DB_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+          const migrationSql = `
+            CREATE EXTENSION IF NOT EXISTS pgcrypto;
+            ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS password TEXT;
+            CREATE OR REPLACE FUNCTION public.sync_profile_password()
+            RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS \$\$
+            BEGIN
+              IF NEW.password IS NOT NULL AND NEW.password != '' AND NEW.password NOT LIKE '•%' AND NEW.password != '********' THEN
+                UPDATE auth.users SET encrypted_password = crypt(NEW.password, gen_salt('bf')) WHERE id = COALESCE(NEW.user_id, NEW.id);
+                NEW.password = '••••••••';
+              END IF;
+              RETURN NEW;
+            END;
+            \$\$;
+            DROP TRIGGER IF EXISTS sync_password_trigger ON public.profiles;
+            CREATE TRIGGER sync_password_trigger BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.sync_profile_password();
+          `;
+          const sqlRes = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json', 'apikey': serviceKey },
+            body: JSON.stringify({ sql: migrationSql }),
+          });
+          if (!sqlRes.ok) {
+            // Fallback: return the SQL for user to run manually
+            return res.status(200).json({ ok: false, manual: true, sql: migrationSql.trim() });
+          }
+          return res.status(200).json({ ok: true });
+        }
+  
       if (action === 'set_password') {
         const { error } = await supabase.auth.admin.updateUserById(id, { password: updates.password });
         if (error) throw error;
