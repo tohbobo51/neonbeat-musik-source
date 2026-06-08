@@ -102,6 +102,13 @@ export default function AdminPage() {
   const [followerForm, setFollowerForm] = useState({ follower_count: 0, following_count: 0 });
   const [savingFollower, setSavingFollower] = useState(false);
 
+    // Set password modal
+    const [setPasswordModal, setSetPasswordModal] = useState(false);
+    const [setPasswordUserId, setSetPasswordUserId] = useState('');
+    const [setPasswordValue, setSetPasswordValue] = useState('');
+    const [settingPassword, setSettingPassword] = useState(false);
+    const [setPasswordDone, setSetPasswordDone] = useState(false);
+
   useEffect(() => {
     if (!isAdmin) return;
     fetchAll();
