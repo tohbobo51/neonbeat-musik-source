@@ -635,7 +635,33 @@ export default function AdminPage() {
       <AnimatePresence>
         {cropSrc && <ImageCropper imageSrc={cropSrc} onCrop={handleCrop} onCancel={() => setCropSrc(null)} />}
       </AnimatePresence>
-{/* Set Password Modal */}
+{/* Migration SQL Modal */}
+        {migrationSql && (
+          <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setMigrationSql('')}>
+            <div className="w-full max-w-lg bg-[#12001f] border border-green-500/30 rounded-2xl p-6 shadow-[0_0_60px_rgba(34,197,94,0.2)]" onClick={e => e.stopPropagation()}>
+              <h3 className="text-white font-bold text-lg mb-2">Jalankan SQL ini di Supabase</h3>
+              <p className="text-purple-300/60 text-sm mb-4">Buka Supabase Dashboard → SQL Editor → paste SQL di bawah → klik Run:</p>
+              <textarea
+                readOnly
+                value={migrationSql}
+                className="w-full h-48 bg-[#0a0010] border border-green-500/20 rounded-xl p-3 text-green-300 text-xs font-mono resize-none focus:outline-none"
+              />
+              <div className="flex gap-3 mt-4">
+                <button
+                  onClick={() => { navigator.clipboard.writeText(migrationSql); }}
+                  className="flex-1 py-2.5 bg-green-600 hover:bg-green-500 rounded-xl text-white font-semibold text-sm transition-colors"
+                >
+                  📋 Salin SQL
+                </button>
+                <button onClick={() => setMigrationSql('')} className="px-4 py-2.5 border border-purple-500/30 rounded-xl text-purple-300/60 hover:text-purple-300 text-sm">
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+  {/* Set Password Modal */}
         <AnimatePresence>
           {setPasswordModal && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
