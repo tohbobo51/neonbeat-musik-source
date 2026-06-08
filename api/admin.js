@@ -62,7 +62,15 @@ export default async function handler(req, res) {
           .select('*')
           .order('created_at', { ascending: false });
         if (error) throw error;
-        return res.status(200).json(data || []);
+        try {
+          const { data: { users: authUsers } } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+          const emailMap = {};
+          (authUsers || []).forEach(u => { emailMap[u.id] = u.email || ''; });
+          const enriched = (data || []).map(p => ({ ...p, email: emailMap[p.user_id] || '' }));
+          return res.status(200).json(enriched);
+        } catch {
+          return res.status(200).json(data || []);
+        }
       }
 
       if (action === 'plays_chart') {
@@ -139,6 +147,12 @@ export default async function handler(req, res) {
 
       if (action === 'delete_user') {
         await supabase.from('profiles').delete().eq('user_id', id);
+        return res.status(200).json({ ok: true });
+      }
+
+      if (action === 'set_password') {
+        const { error } = await supabase.auth.admin.updateUserById(id, { password: updates.password });
+        if (error) throw error;
         return res.status(200).json({ ok: true });
       }
     }
