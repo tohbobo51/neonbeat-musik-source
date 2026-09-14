@@ -238,38 +238,18 @@ export default function AdminPage() {
   };
 
   const handleRunMigration = async () => {
-        setRunningMigration(true);
-        setMigrationSql('');
-        try {
-          const res = await fetch('/api/admin', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'run_migration' }),
-          });
-          const data = await res.json().catch(() => ({}));
-          if (!res.ok) {
-            alert('Gagal setup: ' + (data.error || 'HTTP ' + res.status));
-            setRunningMigration(false);
-            return;
-          }
-          if (data.manual && data.sql) {
-            setMigrationSql(data.sql);
-          } else if (data.ok) {
-            setMigrationDone(true);
-          }
-        } catch (err: any) {
-          alert('Gagal setup kolom password: ' + (err?.message || 'unknown'));
-        }
-        setRunningMigration(false);
-      };
-
-    const toggleVerify = async (userId: string, currentVerified: boolean) => {
-    await fetch('/api/admin', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'verify_user', id: userId, is_verified: !currentVerified }),
-    });
-    setUsers(prev => prev.map(u => u.user_id === userId ? { ...u, is_verified: !currentVerified } : u));
+    setRunningMigration(true);
+    setMigrationSql('');
+    try {
+      const res = await fetch('/api/admin?action=run_migration', { method: 'POST' });
+      const data = await res.json();
+      if (data.manual && data.sql) {
+        setMigrationSql(data.sql);
+      } else if (data.ok) {
+        setMigrationDone(true);
+      }
+    } catch {}
+    setRunningMigration(false);
   };
 
   const openFollowerModal = (user: any) => {
