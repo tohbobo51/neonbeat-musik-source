@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, ListMusic, X, Plus, Check, Timer, Radio } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, ChevronUp, ChevronDown, Square, Activity, Disc3, Heart, ListPlus, ListMusic, X, Plus, Check, Timer, Radio, Download } from 'lucide-react';
 import { usePlayer, AnimationStyle } from '../context/PlayerContext';
 import QueuePanel from './QueuePanel';
 import { useAuth } from '../context/AuthContext';
+import { downloadSong } from '../lib/songDownload';
 
 function formatTime(s: number) {
   if (!s || isNaN(s)) return '0:00';
@@ -92,6 +93,7 @@ export default function MusicPlayer() {
   const { currentSong, isPlaying, currentTime, duration, volume, animStyle, radioMode, queue, setAnimStyle, setRadioMode, togglePlay, nextSong, prevSong, seek, setVolume } = usePlayer();
   const { user, isGuest } = useAuth();
   const [expanded, setExpanded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [showQueue, setShowQueue] = useState(false);
   const [muted, setMuted] = useState(false);
   const [prevVol, setPrevVol] = useState(0.8);
@@ -236,6 +238,25 @@ export default function MusicPlayer() {
     if (muted) { setVolume(prevVol); setMuted(false); }
     else { setPrevVol(volume); setVolume(0); setMuted(true); }
   };
+
+  const handleDownload = async () => {
+    if (!currentSong || downloading) return;
+    setDownloading(true);
+    try {
+      await downloadSong(currentSong);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Gagal mengunduh lagu');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const DownloadButton = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
+    <motion.button whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }} onClick={handleDownload} disabled={downloading}
+      className={("transition-all text-purple-300/60 hover:text-purple-300 disabled:opacity-50 " + className)} title="Download lagu" aria-label="Download lagu">
+      <Download size={size} className={downloading ? 'animate-pulse' : ''} />
+    </motion.button>
+  );
 
   const LikeButton = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
     <motion.button
@@ -484,6 +505,7 @@ export default function MusicPlayer() {
                   <SkipForward size={24} />
                 </button>
                 <PlaylistButton size={22} />
+                <DownloadButton size={22} />
                 <motion.button
                   whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
                   onClick={() => setShowQueue(v => !v)}
@@ -568,6 +590,7 @@ export default function MusicPlayer() {
             </motion.button>
             <button onClick={nextSong} className="text-purple-300/60 hover:text-purple-300"><SkipForward size={18} /></button>
             <PlaylistButton size={17} />
+            <DownloadButton size={17} />
             <motion.button
               whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.85 }}
               onClick={() => setShowQueue(v => !v)}

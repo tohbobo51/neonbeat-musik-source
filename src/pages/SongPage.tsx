@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
   import { motion } from 'framer-motion';
-  import { ArrowLeft, Play, Pause, Heart, Plus, Share2, Copy, MessageCircle, Disc3, BadgeCheck, ListPlus } from 'lucide-react';
+  import { ArrowLeft, Play, Pause, Heart, Plus, Share2, Copy, MessageCircle, Disc3, BadgeCheck, ListPlus, Download } from 'lucide-react';
   import { useNavigate, useParams, Link } from 'react-router-dom';
   import { usePlayer, Song } from '../context/PlayerContext';
   import { useAuth } from '../context/AuthContext';
   import AddToPlaylistModal from '../components/AddToPlaylistModal';
+  import { downloadSong } from '../lib/songDownload';
 
   function formatPlays(n: number) {
     if (n >= 1000000) return (n / 1000000).toFixed(1) + ' Jt';
@@ -23,6 +24,7 @@ import { useState, useEffect } from 'react';
     const [liked, setLiked] = useState(false);
     const [copied, setCopied] = useState(false);
     const [showPlaylistModal, setShowPlaylistModal] = useState(false);
+    const [downloading, setDownloading] = useState(false);
 
     const isActive = currentSong?.id === song?.id;
 
@@ -60,6 +62,18 @@ import { useState, useEffect } from 'react';
       });
       const data = await res.json();
       setLiked(data.liked);
+    };
+
+    const handleDownload = async () => {
+      if (!song || downloading) return;
+      setDownloading(true);
+      try {
+        await downloadSong(song);
+      } catch (err) {
+        alert(err instanceof Error ? err.message : 'Gagal mengunduh lagu');
+      } finally {
+        setDownloading(false);
+      }
     };
 
     const handleShare = async () => {
@@ -171,6 +185,11 @@ import { useState, useEffect } from 'react';
                 </button>
               </>
             )}
+            <button onClick={handleDownload} disabled={downloading}
+              className="flex flex-col items-center gap-1 text-purple-300/50 hover:text-purple-300 transition-all disabled:opacity-50">
+              <Download size={24} className={downloading ? 'animate-pulse' : ''} />
+              <span className="text-xs">Download</span>
+            </button>
             <button onClick={handleShare}
               className="flex flex-col items-center gap-1 text-purple-300/50 hover:text-purple-300 transition-all">
               <Share2 size={24} />

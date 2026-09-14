@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Heart, Plus, Share2, Copy, MessageCircle, BadgeCheck, Disc3 } from 'lucide-react';
+import { Play, Heart, Plus, Share2, Copy, MessageCircle, BadgeCheck, Disc3, Download } from 'lucide-react';
 import { useState } from 'react';
 import { usePlayer, Song } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
+import { downloadSong } from '../lib/songDownload';
 
 interface Props {
   song: Song;
@@ -23,6 +24,7 @@ export default function SongCard({ song, queue, onLike, isLiked, onAddToPlaylist
   const { user, isGuest } = useAuth();
   const [showShare, setShowShare] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const isActive = currentSong?.id === song.id;
   const isVerified = song.profiles?.is_verified;
 
@@ -37,6 +39,19 @@ export default function SongCard({ song, queue, onLike, isLiked, onAddToPlaylist
     const { text } = shareSong(song);
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     setShowShare(false);
+  };
+
+  const handleDownload = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (downloading) return;
+    setDownloading(true);
+    try {
+      await downloadSong(song);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Gagal mengunduh lagu');
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const handleNativeShare = async () => {
@@ -106,7 +121,7 @@ export default function SongCard({ song, queue, onLike, isLiked, onAddToPlaylist
       </div>
 
       {/* Action buttons */}
-      <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
+      <div className="absolute top-3 right-3 flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
         {user && !isGuest && onLike && (
           <button onClick={() => onLike(song.id)}
             className={`p-1.5 rounded-lg transition-all ${
@@ -120,6 +135,9 @@ export default function SongCard({ song, queue, onLike, isLiked, onAddToPlaylist
             <Plus size={14} />
           </button>
         )}
+        <button onClick={handleDownload} disabled={downloading} aria-label="Download lagu" title="Download lagu" className="p-1.5 rounded-lg text-purple-300/60 hover:text-purple-300 bg-black/30 disabled:opacity-50">
+          <Download size={14} className={downloading ? 'animate-pulse' : ''} />
+        </button>
         {/* Share button */}
         <div className="relative">
           <button onClick={() => setShowShare(v => !v)} className="p-1.5 rounded-lg text-purple-300/60 hover:text-purple-300 bg-black/30">
