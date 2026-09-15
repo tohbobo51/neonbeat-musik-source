@@ -1,1 +1,34 @@
-import type { Song } from '../context/PlayerContext';\n\nexport function getSongFilename(title: string) {\n  const cleaned = String(title || 'neonbeat-song').normalize('NFKD').replace(/[\u0000-\u001f\\/:*?"<>|]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140);\n  return (cleaned || 'neonbeat-song').replace(/\.mp3$/i, '') + '.mp3';\n}\n\nexport async function downloadSong(song: Pick<Song, 'title' | 'audio_url'>) {\n  const filename = getSongFilename(song.title);\n  const response = await fetch('/api/song-download?url=' + encodeURIComponent(song.audio_url) + '&filename=' + encodeURIComponent(filename));\n  if (!response.ok) {\n    const data = await response.json().catch(function () { return {}; });\n    throw new Error(data.error || 'Gagal mengunduh lagu');\n  }\n  const blob = await response.blob();\n  const objectUrl = URL.createObjectURL(blob);\n  const anchor = document.createElement('a');\n  anchor.href = objectUrl;\n  anchor.download = filename;\n  document.body.appendChild(anchor);\n  anchor.click();\n  anchor.remove();\n  URL.revokeObjectURL(objectUrl);\n}\n
+import type { Song } from '../context/PlayerContext';
+
+    export function getSongFilename(title: string) {
+    const cleaned = String(title || 'neonbeat-song')
+      .normalize('NFKD')
+      .replace(/[\u0000-\u001f\\/:*?"<>|]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 140);
+    return (cleaned || 'neonbeat-song').replace(/\.mp3$/i, '') + '.mp3';
+    }
+
+    export async function downloadSong(song: Pick<Song, 'title' | 'audio_url'>) {
+    const filename = getSongFilename(song.title);
+    const response = await fetch(
+      '/api/song-download?url=' + encodeURIComponent(song.audio_url) + '&filename=' + encodeURIComponent(filename),
+    );
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.error || 'Gagal mengunduh lagu');
+    }
+
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = objectUrl;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(objectUrl);
+    }
+    
