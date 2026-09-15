@@ -1,19 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
-import { triggerRestore } from './_wake.js';
 
-const supabase = createClient(
-  process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_DB_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
-  {
-    global: {
-      fetch: async (url, options) => {
-        const res = await fetch(url, options);
-        if (!res.ok && res.status >= 500) triggerRestore();
-        return res;
-      },
-    },
-  }
-);
+    const supabaseUrl = process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_DB_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export default supabase;
+    if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase server environment variables are not configured');
+    }
 
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    });
+
+    export default supabase;
+    
