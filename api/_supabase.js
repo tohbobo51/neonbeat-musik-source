@@ -1,4 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
+    import { createClient } from '@supabase/supabase-js';
 
     const supabaseUrl = process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_DB_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -9,6 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 
     const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    realtime: { transport: ws },
     });
 
     export default supabase;
