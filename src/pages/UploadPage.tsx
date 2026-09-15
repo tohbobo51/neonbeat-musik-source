@@ -111,7 +111,7 @@ export default function UploadPage() {
       const saveRes = await fetch('/api/youtube-save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ downloadUrl, filename: importTitle }),
+        body: JSON.stringify({ downloadUrl, filename: title }),
       });
       const saveData = await saveRes.json();
       if (!saveRes.ok || !saveData.url) {
