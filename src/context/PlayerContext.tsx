@@ -128,7 +128,7 @@ import React, { createContext, useContext, useRef, useState, useEffect } from 'r
 
     useEffect(() => {
       const audio = new Audio();
-      audio.crossOrigin = 'anonymous';
+      audio.preload = 'auto';
       audioRef.current = audio;
       audio.volume = volume;
 
