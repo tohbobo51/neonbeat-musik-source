@@ -208,6 +208,22 @@ export default async function handler(req, res) {
     if (req.method === 'PUT') {
       const { id, action, collab_id, status, role, ...updates } = req.body;
 
+      if (action === 'reorder_songs') {
+        const playlistId = req.body.playlist_id || id;
+        const items = Array.isArray(req.body.items) ? req.body.items : [];
+        if (!playlistId) return res.status(400).json({ error: 'playlist_id wajib' });
+        for (let index = 0; index < items.length; index++) {
+          const item = items[index] || {};
+          let query = supabase.from('playlist_songs').update({ position: index + 1 }).eq('playlist_id', playlistId);
+          if (item.id) query = query.eq('id', item.id);
+          else if (item.song_id) query = query.eq('song_id', item.song_id);
+          else continue;
+          const { error } = await query;
+          if (error) throw error;
+        }
+        return res.status(200).json({ ok: true });
+      }
+
       // Respond to collaboration invite (accept/reject)
       if (action === 'update_cover') {
           const { data, error } = await supabase
