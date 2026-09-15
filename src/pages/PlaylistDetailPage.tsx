@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, Reorder } from 'framer-motion';
 import { ListMusic, Play, Disc3, ArrowLeft, Trash2, Users, Camera, Loader } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
@@ -37,6 +37,23 @@ export default function PlaylistDetailPage() {
   // Editor collaborators can also remove songs
   const myCollab = playlist?.collaborators?.find((c: any) => c.user_id === user?.id && c.status === 'accepted');
   const canEdit = isOwner || myCollab?.role === 'editor';
+
+  const handleSongReorder = async (orderedSongs: any[]) => {
+    if (!id || !canEdit || !playlist?.playlist_songs) return;
+    const rowBySongId = new Map(playlist.playlist_songs.map((row: any) => [row.song_id, row]));
+    const orderedRows = orderedSongs.map(song => rowBySongId.get(song.id)).filter(Boolean);
+    setPlaylist((previous: any) => previous ? { ...previous, playlist_songs: orderedRows } : previous);
+    try {
+      const response = await fetch('/api/playlists', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reorder_songs', playlist_id: id, items: orderedRows.map((row: any, index: number) => ({ id: row.id, position: index + 1 })) }),
+      });
+      if (!response.ok) throw new Error('Gagal menyimpan urutan playlist');
+    } catch {
+      fetchDetail();
+    }
+  };
 
   const removeSong = async (songId: string) => {
     if (!id || !canEdit) return;
@@ -210,54 +227,21 @@ export default function PlaylistDetailPage() {
                 <p className="text-purple-300/30 text-sm mt-1">Tambahkan lagu lewat tombol playlist saat memutar musik</p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <Reorder.Group axis="y" values={songs} onReorder={handleSongReorder} className="space-y-2">
                 {songs.map((song: any, i: number) => (
-                  <motion.div
-                    key={song.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.04 }}
-                    className="flex items-center gap-3 p-3 bg-[#12001f]/60 border border-purple-500/10 rounded-xl hover:border-purple-500/30 hover:bg-[#12001f]/80 transition-all cursor-pointer"
-                    onClick={() => playSong(song, songs)}
-                  >
+                  <Reorder.Item key={song.id} value={song} layout dragListener={canEdit} whileDrag={{ scale: 1.02, zIndex: 10 }}
+                    className="flex items-center gap-3 p-3 bg-[#12001f]/60 border border-purple-500/10 rounded-xl hover:border-purple-500/30 hover:bg-[#12001f]/80 transition-all cursor-grab active:cursor-grabbing"
+                    onClick={() => playSong(song, songs)}>
                     <span className="text-purple-300/30 text-sm w-5 text-right flex-shrink-0">{i + 1}</span>
-
                     <div className="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0">
-                      {song.cover_url
-                        ? <img src={song.cover_url} alt="" className="w-full h-full object-cover" />
-                        : <div className="w-full h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center">
-                            <Disc3 size={18} className="text-purple-400" />
-                          </div>}
+                      {song.cover_url ? <img src={song.cover_url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center"><Disc3 size={18} className="text-purple-400" /></div>}
                     </div>
-
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold truncate text-sm">{song.title}</p>
-                      <p className="text-purple-300/50 text-xs truncate">{song.artist_name}</p>
-                    </div>
-
-                    {song.genres && (
-                      <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0"
-                        style={{ background: `${song.genres.color}25`, color: song.genres.color, border: `1px solid ${song.genres.color}40` }}>
-                        {song.genres.name}
-                      </span>
-                    )}
-
-                    {canEdit && (
-                      <motion.button
-                        whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                        onClick={e => { e.stopPropagation(); removeSong(song.id); }}
-                        disabled={removing === song.id}
-                        className="p-2 rounded-lg text-red-400/50 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40 flex-shrink-0"
-                        title="Hapus dari playlist"
-                      >
-                        {removing === song.id
-                          ? <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
-                          : <Trash2 size={15} />}
-                      </motion.button>
-                    )}
-                  </motion.div>
+                    <div className="flex-1 min-w-0"><p className="text-white font-semibold truncate text-sm">{song.title}</p><p className="text-purple-300/50 text-xs truncate">{song.artist_name}</p></div>
+                    {song.genres && <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0" style={{ background: song.genres.color + '25', color: song.genres.color, border: '1px solid ' + song.genres.color + '40' }}>{song.genres.name}</span>}
+                    {canEdit && <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={e => { e.stopPropagation(); removeSong(song.id); }} disabled={removing === song.id} className="p-2 rounded-lg text-red-400/50 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40 flex-shrink-0" title="Hapus dari playlist">{removing === song.id ? <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" /> : <Trash2 size={15} />}</motion.button>}
+                  </Reorder.Item>
                 ))}
-              </div>
+              </Reorder.Group>
             )}
           </>
         )}
