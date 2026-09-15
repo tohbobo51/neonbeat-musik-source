@@ -218,6 +218,15 @@ export default function AdminPage() {
     fetchAll();
   };
 
+  const toggleVerify = async (userId: string, is_verified: boolean) => {
+    await fetch('/api/admin', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verify_user', id: userId, is_verified: !is_verified }),
+    });
+    fetchAll();
+  };
+
   const handleSetPassword = async () => {
       if (!setPasswordUserId || !setPasswordValue.trim() || setPasswordValue.length < 6) return;
       setSettingPassword(true);
